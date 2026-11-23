@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "updated_at": "",
+  "admin_whatsapp": "201080482372",
+  "vodafone_cash": "201080482372",
+  "plans": [
+    {
+      "id": "3days",
+      "days": 3,
+      "price_egp": 50
+    },
+    {
+      "id": "weekly",
+      "days": 7,
+      "price_egp": 200
+    },
+    {
+      "id": "monthly",
+      "days": 30,
+      "price_egp": 600
+    }
+  ],
+  "subscribers": []
+}
