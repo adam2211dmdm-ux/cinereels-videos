@@ -483,9 +483,9 @@
       "description_en": "An album of childhood photos proves the sisters met once — as little girls.",
       "description_ar": "ألبوم صور طفولة يثبت أن الأختين التقيتا مرة — وهما طفلتان.",
       "category": "drama",
-      "duration_sec": 90,
-      "video_url": "",
-      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep12/720/1280",
+      "duration_sec": 60,
+      "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode12.mp4",
+      "thumbnail_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/thumbnails/ep12.webp",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
@@ -494,13 +494,15 @@
       "views_count": 7550,
       "is_published": true,
       "is_locked": false,
-      "coming_soon": true,
+      "coming_soon": false,
       "tags": [
         "drama",
         "mystery",
         "family"
       ],
-      "views": 7550
+      "views": 7550,
+      "burned_subs": true,
+      "status": "published"
     },
     {
       "id": "lm-ep13",
