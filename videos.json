@@ -380,14 +380,14 @@
       "id": "lm-ep9",
       "series_id": "last-message",
       "episode_number": 9,
-      "title_en": "The Last Message — Ep 9: The Will",
-      "title_ar": "الرسالة الأخيرة — الحلقة 9: الوصية",
+      "title_en": "The Last Message — Ep 9: The House Goes to Whoever Forgives First",
+      "title_ar": "الرسالة الأخيرة — الحلقة 9: البيت لمن تسامح أولاً",
       "description_en": "The lawyer reads the will: the house goes to the sister who forgives first.",
       "description_ar": "يقرأ المحامي الوصية: البيت يذهب للأخت التي تسامح أولاً.",
       "category": "drama",
-      "duration_sec": 90,
-      "video_url": "",
-      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep9/720/1280",
+      "duration_sec": 60,
+      "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode9.mp4",
+      "thumbnail_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/thumbnails/ep9.webp",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
@@ -396,13 +396,14 @@
       "views_count": 8900,
       "is_published": true,
       "is_locked": false,
-      "coming_soon": true,
+      "coming_soon": false,
       "tags": [
         "drama",
         "mystery",
         "family"
       ],
-      "views": 8900
+      "views": 8900,
+      "status": "published"
     },
     {
       "id": "lm-ep10",
