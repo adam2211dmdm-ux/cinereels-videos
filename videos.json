@@ -685,9 +685,9 @@
       "description_en": "Digging in the garden, Layla finds a tin box buried under the lemon tree.",
       "description_ar": "أثناء الحفر في الحديقة، تجد ليلى علبة قصدير مدفونة تحت شجرة الليمون.",
       "category": "drama",
-      "duration_sec": 90,
-      "video_url": "",
-      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep14/720/1280",
+      "duration_sec": 60,
+      "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode14.mp4",
+      "thumbnail_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/thumbnails/ep14.webp",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
@@ -696,13 +696,15 @@
       "views_count": 6650,
       "is_published": true,
       "is_locked": false,
-      "coming_soon": true,
+      "coming_soon": false,
       "tags": [
         "drama",
         "mystery",
         "family"
       ],
-      "views": 6650
+      "views": 6650,
+      "burned_subs": true,
+      "status": "published"
     },
     {
       "id": "lm-ep15",
