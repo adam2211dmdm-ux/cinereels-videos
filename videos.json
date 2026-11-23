@@ -513,9 +513,9 @@
       "description_en": "The uncle admits he borrowed against the house, and the bank is coming.",
       "description_ar": "يعترف العم بأنه اقترض بضمان البيت، والبنك قادم.",
       "category": "drama",
-      "duration_sec": 90,
-      "video_url": "",
-      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep13/720/1280",
+      "duration_sec": 60,
+      "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode13.mp4",
+      "thumbnail_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/thumbnails/ep13.webp",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
@@ -524,13 +524,15 @@
       "views_count": 7100,
       "is_published": true,
       "is_locked": false,
-      "coming_soon": true,
+      "coming_soon": false,
       "tags": [
         "drama",
         "mystery",
         "family"
       ],
-      "views": 7100
+      "views": 7100,
+      "burned_subs": true,
+      "status": "published"
     },
     {
       "id": "lm-ep14",
