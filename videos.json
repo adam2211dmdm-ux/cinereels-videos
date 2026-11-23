@@ -409,14 +409,14 @@
       "id": "lm-ep10",
       "series_id": "last-message",
       "episode_number": 10,
-      "title_en": "The Last Message — Ep 10: The Key",
-      "title_ar": "الرسالة الأخيرة — الحلقة 10: المفتاح",
+      "title_en": "The Last Message — Ep 10: The Key in Omar's Pocket",
+      "title_ar": "الرسالة الأخيرة — الحلقة 10: المفتاح في جيب عمر",
       "description_en": "The missing drawer key turns up in Omar's pocket — and he will not explain why.",
       "description_ar": "يظهر مفتاح الدرج المفقود في جيب عمر — وهو لن يفسّر لماذا.",
       "category": "drama",
-      "duration_sec": 90,
-      "video_url": "",
-      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep10/720/1280",
+      "duration_sec": 60,
+      "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode10.mp4",
+      "thumbnail_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/thumbnails/ep10.webp",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
@@ -425,13 +425,14 @@
       "views_count": 8450,
       "is_published": true,
       "is_locked": false,
-      "coming_soon": true,
+      "coming_soon": false,
       "tags": [
         "drama",
         "mystery",
         "family"
       ],
-      "views": 8450
+      "views": 8450,
+      "status": "published"
     },
     {
       "id": "lm-ep11",
