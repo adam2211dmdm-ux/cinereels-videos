@@ -91,7 +91,7 @@
   "series": [
     {
       "category_id": "drama",
-      "cover_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg",
+      "cover_url": "https://picsum.photos/seed/cinereels-lm-ep1/720/1280",
       "description": "Layla receives a voice message from her late mother — scheduled a year ago. 25 episodes x 90 seconds. First 25 free.",
       "description_ar": "ليلى تستقبل رسالة صوتية من أمها المتوفاة — مجدولة منذ سنة. ٢٥ حلقة × ٩٠ ثانية. أول ٢٥ حلقة مجاناً.",
       "episode_ids": [
@@ -134,7 +134,7 @@
       "title_ar": "فرصة ثانية",
       "description": "After a failed engagement, Maya returns to her hometown and finds the boy she left behind — now running the café she once dreamed of.",
       "description_ar": "بعد خطوبة فاشلة، تعود مايا إلى مدينتها وتجد الفتى الذي تركته — وهو الآن يدير المقهى الذي حلمت به يوماً.",
-      "cover_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
+      "cover_url": "https://picsum.photos/seed/cinereels-sc-ep1/720/1280",
       "episode_ids": [
         "sc-ep1",
         "sc-ep2",
@@ -155,19 +155,20 @@
       "category": "comedy",
       "duration_sec": 596,
       "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-bbb/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 12400,
-      "views_count": 98000,
+      "views_count": 8600,
       "is_published": true,
       "tags": [
         "comedy",
         "family"
       ],
-      "is_locked": false
+      "is_locked": false,
+      "views": 8600
     },
     {
       "id": "sintel",
@@ -180,19 +181,20 @@
       "category": "drama",
       "duration_sec": 888,
       "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-sintel/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 9800,
-      "views_count": 76000,
+      "views_count": 7300,
       "is_published": true,
       "tags": [
         "drama",
         "fantasy"
       ],
-      "is_locked": false
+      "is_locked": false,
+      "views": 7300
     },
     {
       "id": "tos",
@@ -205,19 +207,20 @@
       "category": "action",
       "duration_sec": 734,
       "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-tos/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 15200,
-      "views_count": 121000,
+      "views_count": 8900,
       "is_published": true,
       "tags": [
         "action",
         "sci-fi"
       ],
-      "is_locked": false
+      "is_locked": false,
+      "views": 8900
     },
     {
       "id": "ed",
@@ -230,19 +233,20 @@
       "category": "movies",
       "duration_sec": 653,
       "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-ed/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 7300,
-      "views_count": 54000,
+      "views_count": 5400,
       "is_published": true,
       "tags": [
         "movies",
         "fantasy"
       ],
-      "is_locked": false
+      "is_locked": false,
+      "views": 5400
     },
     {
       "id": "bbb2",
@@ -255,18 +259,19 @@
       "category": "comedy",
       "duration_sec": 15,
       "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-bbb2/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 4100,
-      "views_count": 32000,
+      "views_count": 3200,
       "is_published": true,
       "tags": [
         "comedy"
       ],
-      "is_locked": false
+      "is_locked": false,
+      "views": 3200
     },
     {
       "id": "tos2",
@@ -279,18 +284,19 @@
       "category": "action",
       "duration_sec": 15,
       "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-tos2/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 5600,
-      "views_count": 41000,
+      "views_count": 4100,
       "is_published": true,
       "tags": [
         "action"
       ],
-      "is_locked": false
+      "is_locked": false,
+      "views": 4100
     },
     {
       "id": "sintel2",
@@ -303,18 +309,19 @@
       "category": "drama",
       "duration_sec": 60,
       "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-sintel2/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 3800,
-      "views_count": 29000,
+      "views_count": 2900,
       "is_published": true,
       "tags": [
         "drama"
       ],
-      "is_locked": false
+      "is_locked": false,
+      "views": 2900
     },
     {
       "id": "ed2",
@@ -327,19 +334,20 @@
       "category": "movies",
       "duration_sec": 15,
       "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerJoyrides.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-ed2/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 2900,
-      "views_count": 21000,
+      "views_count": 1800,
       "is_published": true,
       "tags": [
         "movies",
         "fantasy"
       ],
-      "is_locked": false
+      "is_locked": false,
+      "views": 1800
     },
     {
       "id": "lm-ep1",
@@ -352,13 +360,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode1.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep1/720/1280",
       "subtitles_en_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/episode1_en.vtt",
       "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/episode1_ar.vtt",
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 1000,
-      "views_count": 5000,
+      "views_count": 12500,
       "is_published": true,
       "tags": [
         "drama",
@@ -367,7 +375,8 @@
       ],
       "is_locked": false,
       "status": "published",
-      "coming_soon": false
+      "coming_soon": false,
+      "views": 12500
     },
     {
       "id": "lm-ep2",
@@ -380,13 +389,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode2.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep2/720/1280",
       "subtitles_en_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/episode2_en.vtt",
       "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/episode2_ar.vtt",
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 2000,
-      "views_count": 10000,
+      "views_count": 12050,
       "is_published": true,
       "tags": [
         "drama",
@@ -395,7 +404,8 @@
       ],
       "is_locked": false,
       "status": "published",
-      "coming_soon": false
+      "coming_soon": false,
+      "views": 12050
     },
     {
       "id": "lm-ep3",
@@ -408,13 +418,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode3.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep3/720/1280",
       "subtitles_en_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/episode3_en.vtt",
       "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/episode3_ar.vtt",
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 3000,
-      "views_count": 15000,
+      "views_count": 11600,
       "is_published": true,
       "tags": [
         "drama",
@@ -423,7 +433,8 @@
       ],
       "is_locked": false,
       "status": "published",
-      "coming_soon": false
+      "coming_soon": false,
+      "views": 11600
     },
     {
       "id": "lm-ep4",
@@ -436,13 +447,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode4.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerJoyrides.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep4/720/1280",
       "subtitles_en_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/episode4_en.vtt",
       "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/episode4_ar.vtt",
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 4000,
-      "views_count": 20000,
+      "views_count": 11150,
       "is_published": true,
       "tags": [
         "drama",
@@ -451,7 +462,8 @@
       ],
       "is_locked": false,
       "status": "published",
-      "coming_soon": false
+      "coming_soon": false,
+      "views": 11150
     },
     {
       "id": "lm-ep5",
@@ -464,13 +476,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode5.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerMeltdowns.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep5/720/1280",
       "subtitles_en_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/episode5_en.vtt",
       "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/episode5_ar.vtt",
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 5000,
-      "views_count": 25000,
+      "views_count": 10700,
       "is_published": true,
       "tags": [
         "drama",
@@ -479,7 +491,8 @@
       ],
       "is_locked": false,
       "status": "published",
-      "coming_soon": false
+      "coming_soon": false,
+      "views": 10700
     },
     {
       "id": "lm-ep6",
@@ -492,13 +505,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep6/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 10250,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -506,7 +519,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 10250
     },
     {
       "id": "lm-ep7",
@@ -519,13 +533,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep7/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 9800,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -533,7 +547,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 9800
     },
     {
       "id": "lm-ep8",
@@ -546,13 +561,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep8/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 9350,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -560,7 +575,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 9350
     },
     {
       "id": "lm-ep9",
@@ -573,13 +589,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep9/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 8900,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -587,7 +603,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 8900
     },
     {
       "id": "lm-ep10",
@@ -600,13 +617,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep10/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 8450,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -614,7 +631,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 8450
     },
     {
       "id": "lm-ep11",
@@ -627,13 +645,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep11/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 8000,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -641,7 +659,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 8000
     },
     {
       "id": "lm-ep12",
@@ -654,13 +673,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep12/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 7550,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -668,7 +687,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 7550
     },
     {
       "id": "lm-ep13",
@@ -681,13 +701,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep13/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 7100,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -695,7 +715,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 7100
     },
     {
       "id": "lm-ep14",
@@ -708,13 +729,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep14/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 6650,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -722,7 +743,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 6650
     },
     {
       "id": "lm-ep15",
@@ -735,13 +757,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep15/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 6200,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -749,7 +771,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 6200
     },
     {
       "id": "lm-ep16",
@@ -762,13 +785,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep16/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 5750,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -776,7 +799,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 5750
     },
     {
       "id": "lm-ep17",
@@ -789,13 +813,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep17/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 5300,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -803,7 +827,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 5300
     },
     {
       "id": "lm-ep18",
@@ -816,13 +841,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep18/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 4850,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -830,7 +855,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 4850
     },
     {
       "id": "lm-ep19",
@@ -843,13 +869,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep19/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 4400,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -857,7 +883,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 4400
     },
     {
       "id": "lm-ep20",
@@ -870,13 +897,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep20/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 3950,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -884,7 +911,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 3950
     },
     {
       "id": "lm-ep21",
@@ -897,13 +925,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep21/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 3500,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -911,7 +939,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 3500
     },
     {
       "id": "lm-ep22",
@@ -924,13 +953,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep22/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 3050,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -938,7 +967,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 3050
     },
     {
       "id": "lm-ep23",
@@ -951,13 +981,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep23/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 2600,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -965,7 +995,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 2600
     },
     {
       "id": "lm-ep24",
@@ -978,13 +1009,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep24/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 2150,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -992,7 +1023,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 2150
     },
     {
       "id": "lm-ep25",
@@ -1005,13 +1037,13 @@
       "category": "drama",
       "duration_sec": 90,
       "video_url": "",
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep25/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 1700,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -1019,7 +1051,8 @@
         "drama",
         "mystery",
         "family"
-      ]
+      ],
+      "views": 1700
     },
     {
       "id": "sc-ep1",
@@ -1032,13 +1065,13 @@
       "category": "romance",
       "duration_sec": 30,
       "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/romantic-drama-30s.mp4",
-      "thumbnail_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-sc-ep1/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 4200,
       "is_published": true,
       "is_locked": false,
       "coming_soon": false,
@@ -1046,7 +1079,8 @@
         "romance",
         "drama"
       ],
-      "status": "published"
+      "status": "published",
+      "views": 4200
     },
     {
       "id": "sc-ep2",
@@ -1059,13 +1093,13 @@
       "category": "romance",
       "duration_sec": 90,
       "video_url": null,
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-sc-ep2/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 3100,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -1073,7 +1107,8 @@
         "romance",
         "drama"
       ],
-      "status": "coming_soon"
+      "status": "coming_soon",
+      "views": 3100
     },
     {
       "id": "sc-ep3",
@@ -1086,13 +1121,13 @@
       "category": "romance",
       "duration_sec": 90,
       "video_url": null,
-      "thumbnail_url": "",
+      "thumbnail_url": "https://picsum.photos/seed/cinereels-sc-ep3/720/1280",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
       "subtitle_default": "ar",
       "likes_count": 0,
-      "views_count": 0,
+      "views_count": 2400,
       "is_published": true,
       "is_locked": false,
       "coming_soon": true,
@@ -1100,7 +1135,8 @@
         "romance",
         "drama"
       ],
-      "status": "coming_soon"
+      "status": "coming_soon",
+      "views": 2400
     }
   ]
 }
