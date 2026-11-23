@@ -351,14 +351,14 @@
       "id": "lm-ep8",
       "series_id": "last-message",
       "episode_number": 8,
-      "title_en": "The Last Message — Ep 8: Two Mothers",
-      "title_ar": "الرسالة الأخيرة — الحلقة 8: أمّان",
+      "title_en": "The Last Message — Ep 8: Our Mother's Second Life",
+      "title_ar": "الرسالة الأخيرة — الحلقة 8: حياة أمنا الثانية",
       "description_en": "Sara tells Layla their mother lived two lives, and kept both families apart.",
       "description_ar": "تخبر سارة ليلى أن أمهما عاشت حياتين، وأبقت العائلتين منفصلتين.",
       "category": "drama",
-      "duration_sec": 90,
-      "video_url": "",
-      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep8/720/1280",
+      "duration_sec": 60,
+      "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode8.mp4",
+      "thumbnail_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/thumbnails/ep8.webp",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
@@ -367,13 +367,14 @@
       "views_count": 9350,
       "is_published": true,
       "is_locked": false,
-      "coming_soon": true,
+      "coming_soon": false,
       "tags": [
         "drama",
         "mystery",
         "family"
       ],
-      "views": 9350
+      "views": 9350,
+      "status": "published"
     },
     {
       "id": "lm-ep9",
