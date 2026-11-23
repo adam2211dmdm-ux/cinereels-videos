@@ -71,5 +71,32 @@ https://raw.githubusercontent.com/<user>/<repo>/main/videos/episode1.mp4
 
 | الملف | إيه ده؟ |
 |---|---|
-| `videos.json` | المانيفست — 13 فيديو (8 مستقلة + 5 حلقات "الرسالة الأخيرة") |
+| `videos.json` | المانيفست — 36 فيديو (8 مستقلة + 25 حلقة "الرسالة الأخيرة" + 3 حلقات "فرصة ثانية") |
 | `README_GITHUB_AR.md` | الشرح ده |
+
+## 6) التصنيف — إزاي تحط فيديو في القسم الصح
+
+كل فيديو في `videos.json` ليه حقل `"category"` — ده اللي بيحدد القسم اللي هيظهر فيه في التطبيق. الأقسام المتاحة (10):
+
+| `category` | الاسم | القسم في التطبيق |
+|---|---|---|
+| `drama` | Drama / دراما | دراما |
+| `romance` | Romance / رومانسي | رومانسي |
+| `action` | Action / أكشن | أكشن |
+| `comedy` | Comedy / كوميدي | كوميدي |
+| `horror` | Horror / رعب | رعب |
+| `anime` | Anime / أنمي | أنمي |
+| `movies` | Movies / أفلام | أفلام |
+| `arabic-series` | Arabic Series / مسلسلات عربية | مسلسلات عربية |
+| `international-series` | International Series / مسلسلات أجنبية | مسلسلات أجنبية |
+| `thriller` | Thriller / إثارة | إثارة |
+
+**لما تنزّل دراما جديدة (مثال):**
+1. ارفع ملف الفيديو (مثلًا `videos/my-drama-ep1.mp4`) وملفات الترجمة في مجلد القسم: `subtitles/drama/episode1_en.vtt` و `subtitles/drama/episode1_ar.vtt`.
+2. في `videos.json`، ضيف الفيديو وحط `"category": "drama"` (و `"series_id"` لو هو حلقة من مسلسل، و `"episode_number"` لرقم الحلقة).
+3. لو رومانسي: نفس الخطوات بس المجلد `subtitles/romance/` و `"category": "romance"` — والتطبيق هيعرضه في قسم "رومانسي" أوتوماتيك من غير أي تعديل في الكود.
+
+**ملحوظة عن الترجمة:** مجلدات الترجمة متقسمة حسب التصنيف: `subtitles/drama/` للدراما، `subtitles/romance/` للرومانسي، وهكذا. روابط الترجمة في `videos.json` لازم تطابق مكان الملف بالظبط، مثلًا:
+`https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/episode1_ar.vtt`
+
+**المسلسلات والاشتراك:** كل مسلسل ليه `"free_episodes": 25` — أول 25 حلقة مجانية، والحلقات بعد كده مقفولة بالاشتراك (`"is_locked": true`). الحلقة اللي لسه متصورتش حط `"video_url": null` و `"status": "coming_soon"` وهتظهر "قريباً" من غير ما تشغّل فيديو مش موجود.
