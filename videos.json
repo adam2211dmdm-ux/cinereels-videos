@@ -715,9 +715,9 @@
       "description_en": "Sara confesses she knew about Layla all along — and chose to stay away.",
       "description_ar": "تعترف سارة بأنها كانت تعرف ليلى طوال الوقت — واختارت أن تبتعد.",
       "category": "drama",
-      "duration_sec": 90,
-      "video_url": "",
-      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep15/720/1280",
+      "duration_sec": 60,
+      "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode15.mp4",
+      "thumbnail_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/thumbnails/ep15.webp",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
@@ -726,13 +726,15 @@
       "views_count": 6200,
       "is_published": true,
       "is_locked": false,
-      "coming_soon": true,
+      "coming_soon": false,
       "tags": [
         "drama",
         "mystery",
         "family"
       ],
-      "views": 6200
+      "views": 6200,
+      "burned_subs": true,
+      "status": "published"
     },
     {
       "id": "lm-ep16",
