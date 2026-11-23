@@ -453,9 +453,9 @@
       "description_en": "Omar calls at midnight: their mother left him a message too.",
       "description_ar": "يتصل عمر في منتصف الليل: أمّهما تركت له رسالة أيضاً.",
       "category": "drama",
-      "duration_sec": 90,
-      "video_url": "",
-      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep11/720/1280",
+      "duration_sec": 60,
+      "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode11.mp4",
+      "thumbnail_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/thumbnails/ep11.webp",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
@@ -464,13 +464,15 @@
       "views_count": 8000,
       "is_published": true,
       "is_locked": false,
-      "coming_soon": true,
+      "coming_soon": false,
       "tags": [
         "drama",
         "mystery",
         "family"
       ],
-      "views": 8000
+      "views": 8000,
+      "burned_subs": true,
+      "status": "published"
     },
     {
       "id": "lm-ep12",
