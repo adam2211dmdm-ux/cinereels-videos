@@ -322,14 +322,14 @@
       "id": "lm-ep7",
       "series_id": "last-message",
       "episode_number": 7,
-      "title_en": "The Last Message — Ep 7: The Second Letter",
-      "title_ar": "الرسالة الأخيرة — الحلقة 7: الرسالة الثانية",
+      "title_en": "The Last Message — Ep 7: The Name That Must Never Enter",
+      "title_ar": "الرسالة الأخيرة — الحلقة 7: الاسم الذي لا يجب أن يدخل أبداً",
       "description_en": "A second sealed letter names the house — and the person who should never enter it.",
       "description_ar": "رسالة ثانية مختومة تسمّي البيت — والشخص الذي يجب ألا يدخله أبداً.",
       "category": "drama",
-      "duration_sec": 90,
-      "video_url": "",
-      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep7/720/1280",
+      "duration_sec": 60,
+      "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode7.mp4",
+      "thumbnail_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/thumbnails/ep7.webp",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
@@ -338,13 +338,14 @@
       "views_count": 9800,
       "is_published": true,
       "is_locked": false,
-      "coming_soon": true,
+      "coming_soon": false,
       "tags": [
         "drama",
         "mystery",
         "family"
       ],
-      "views": 9800
+      "views": 9800,
+      "status": "published"
     },
     {
       "id": "lm-ep8",
