@@ -298,9 +298,9 @@
       "description_en": "Layla finds Sara's address hidden inside her mother's old coat.",
       "description_ar": "تجد ليلى عنوان سارة مخبأ داخل معطف أمها القديم.",
       "category": "drama",
-      "duration_sec": 90,
-      "video_url": "",
-      "thumbnail_url": "https://picsum.photos/seed/cinereels-lm-ep6/720/1280",
+      "duration_sec": 60,
+      "video_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/videos/episode6.mp4",
+      "thumbnail_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/thumbnails/ep6.webp",
       "subtitles_en_url": null,
       "subtitles_ar_url": null,
       "language": "en",
@@ -309,13 +309,14 @@
       "views_count": 10250,
       "is_published": true,
       "is_locked": false,
-      "coming_soon": true,
+      "coming_soon": false,
       "tags": [
         "drama",
         "mystery",
         "family"
       ],
-      "views": 10250
+      "views": 10250,
+      "status": "published"
     },
     {
       "id": "lm-ep7",
