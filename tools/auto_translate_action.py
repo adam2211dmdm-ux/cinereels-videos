@@ -313,7 +313,10 @@ def main():
                "changed_paths": [], "commit_message": ""}
     changed = False
     msgs = []
-    for v in cands[:MAX_PER_RUN]:
+    done = 0
+    for v in cands:
+        if done >= MAX_PER_RUN:
+            break
         ep_id = v["id"]
         num = v.get("episode_number", 0)
         titles = series_titles.get(v["series_id"], {"ar": v["series_id"],
@@ -363,6 +366,7 @@ def main():
                                        "detail": "OCR hits %d/%d frames"
                                                  % (hits, nframes)})
             msgs.append("ep%d burned-in subs" % num)
+            done += 1
             print("BURNED_IN %s (%d/%d frames)" % (ep_id, hits, nframes))
             cleanup(ep_id)
             continue
@@ -408,6 +412,7 @@ def main():
                                    "segments": len(data["segments"])})
         msgs.append("ep%d translated (%s, %d segments)"
                     % (num, lang, len(data["segments"])))
+        done += 1
         print("DONE %s: %d segments, detected %s"
               % (ep_id, len(data["segments"]), lang))
         cleanup(ep_id)
