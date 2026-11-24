@@ -93,11 +93,25 @@ jobs:
           set -e
           mkdir -p models-ct2
           python - <<'PY'
-          import json, os, urllib.request, zipfile
+          import json, os, time, urllib.request, urllib.error, zipfile
+          # argos-net.com blocks Python's default User-Agent (and the
+          # runner IP range is flaky) — use a browser UA + retries.
+          # (2026-11-24: the first 3 runs all failed on this step.)
+          UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"}
           links = json.load(open("argos-links.json"))
           for name, url in links.items():
               path = "models-ct2/translate-%s.argosmodel" % name
-              urllib.request.urlretrieve(url, path)
+              for attempt in (1, 2, 3):
+                  try:
+                      req = urllib.request.Request(url, headers=UA)
+                      with urllib.request.urlopen(req, timeout=600) as r, open(path, "wb") as f:
+                          f.write(r.read())
+                      break
+                  except (urllib.error.URLError, TimeoutError, OSError) as e:
+                      print("attempt %d for %s failed: %s" % (attempt, name, e))
+                      if attempt == 3:
+                          raise
+                      time.sleep(15)
               with zipfile.ZipFile(path) as z:
                   z.extractall("models-ct2/translate-%s" % name)
               os.remove(path)
