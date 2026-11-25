@@ -8972,8 +8972,8 @@
    "duration_sec": 125,
    "video_url": "https://v-mps.crazymaplestudios.com/204b8bd9e80171ee89565014c1ca0102/h264-narrow-ld.m3u8",
    "thumbnail_url": "https://v-mps.crazymaplestudios.com/images/3aeffed0-e779-11ee-94ca-b3f9375866ba.jpg",
-   "subtitles_en_url": null,
-   "subtitles_ar_url": null,
+   "subtitles_en_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode19_en.vtt",
+   "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode19_ar.vtt",
    "language": "en",
    "subtitle_default": "ar",
    "likes_count": 0,
@@ -9002,7 +9002,7 @@
    "video_url": "https://v-mps.crazymaplestudios.com/203f03f0e80171eeb07a87c6371c0102/h264-narrow-ld.m3u8",
    "thumbnail_url": "https://v-mps.crazymaplestudios.com/images/3aeffed0-e779-11ee-94ca-b3f9375866ba.jpg",
    "subtitles_en_url": null,
-   "subtitles_ar_url": null,
+   "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode20_ar.vtt",
    "language": "en",
    "subtitle_default": "ar",
    "likes_count": 0,
@@ -9015,7 +9015,7 @@
    "status": "published",
    "coming_soon": false,
    "views": 0,
-   "burned_subs": false,
+   "burned_subs": true,
    "web_page": false
   },
   {
@@ -9030,8 +9030,8 @@
    "duration_sec": 108,
    "video_url": "https://v-mps.crazymaplestudios.com/e039d404e80271eea9205114c0db0102/h264-narrow-ld.m3u8",
    "thumbnail_url": "https://v-mps.crazymaplestudios.com/images/3aeffed0-e779-11ee-94ca-b3f9375866ba.jpg",
-   "subtitles_en_url": null,
-   "subtitles_ar_url": null,
+   "subtitles_en_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode21_en.vtt",
+   "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode21_ar.vtt",
    "language": "en",
    "subtitle_default": "ar",
    "likes_count": 0,
@@ -9060,7 +9060,7 @@
    "video_url": "https://v-mps.crazymaplestudios.com/a06d7515e80271eeac181426d1810102/h264-narrow-ld.m3u8",
    "thumbnail_url": "https://v-mps.crazymaplestudios.com/images/3aeffed0-e779-11ee-94ca-b3f9375866ba.jpg",
    "subtitles_en_url": null,
-   "subtitles_ar_url": null,
+   "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode22_ar.vtt",
    "language": "en",
    "subtitle_default": "ar",
    "likes_count": 0,
@@ -9073,7 +9073,7 @@
    "status": "published",
    "coming_soon": false,
    "views": 0,
-   "burned_subs": false,
+   "burned_subs": true,
    "web_page": false
   },
   {
@@ -9089,7 +9089,7 @@
    "video_url": "https://v-mps.crazymaplestudios.com/d01b5d22e80271eeaf2c2680f9ea0102/h264-narrow-ld.m3u8",
    "thumbnail_url": "https://v-mps.crazymaplestudios.com/images/3aeffed0-e779-11ee-94ca-b3f9375866ba.jpg",
    "subtitles_en_url": null,
-   "subtitles_ar_url": null,
+   "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode23_ar.vtt",
    "language": "en",
    "subtitle_default": "ar",
    "likes_count": 0,
@@ -9102,7 +9102,7 @@
    "status": "published",
    "coming_soon": false,
    "views": 0,
-   "burned_subs": false,
+   "burned_subs": true,
    "web_page": false
   },
   {
@@ -9118,7 +9118,7 @@
    "video_url": "https://v-mps.crazymaplestudios.com/006d0f30e80271eebfe436a5e8aa0102/h264-narrow-ld.m3u8",
    "thumbnail_url": "https://v-mps.crazymaplestudios.com/images/3aeffed0-e779-11ee-94ca-b3f9375866ba.jpg",
    "subtitles_en_url": null,
-   "subtitles_ar_url": null,
+   "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode24_ar.vtt",
    "language": "en",
    "subtitle_default": "ar",
    "likes_count": 0,
@@ -9131,7 +9131,7 @@
    "status": "published",
    "coming_soon": false,
    "views": 0,
-   "burned_subs": false,
+   "burned_subs": true,
    "web_page": false
   },
   {
@@ -9147,7 +9147,7 @@
    "video_url": "https://v-mps.crazymaplestudios.com/00679e42e80271eeb81f1426d1800102/h264-narrow-ld.m3u8",
    "thumbnail_url": "https://v-mps.crazymaplestudios.com/images/3aeffed0-e779-11ee-94ca-b3f9375866ba.jpg",
    "subtitles_en_url": null,
-   "subtitles_ar_url": null,
+   "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode25_ar.vtt",
    "language": "en",
    "subtitle_default": "ar",
    "likes_count": 0,
@@ -9160,7 +9160,7 @@
    "status": "published",
    "coming_soon": false,
    "views": 0,
-   "burned_subs": false,
+   "burned_subs": true,
    "web_page": false
   },
   {
@@ -9176,7 +9176,7 @@
    "video_url": "https://v-mps.crazymaplestudios.com/a07bc354e80271eebfea5014c1da0102/h264-narrow-ld.m3u8",
    "thumbnail_url": "https://v-mps.crazymaplestudios.com/images/3aeffed0-e779-11ee-94ca-b3f9375866ba.jpg",
    "subtitles_en_url": null,
-   "subtitles_ar_url": null,
+   "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode26_ar.vtt",
    "language": "en",
    "subtitle_default": "ar",
    "likes_count": 0,
@@ -9189,7 +9189,7 @@
    "status": "published",
    "coming_soon": false,
    "views": 0,
-   "burned_subs": false,
+   "burned_subs": true,
    "web_page": false
   },
   {
