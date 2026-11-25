@@ -1,0 +1,96 @@
+# CineReels auto-thumbnails — runs WITHOUT any human approval.
+#
+# Every 6 hours this workflow finds published episodes whose thumbnail
+# is NOT yet hosted in this repo, picks the best frame of the real
+# episode video with multilingual CLIP
+# (sentence-transformers/clip-ViT-B-32-multilingual-v1, CPU), saves it
+# as thumbnails/<video_id>.jpg, and points the manifest's thumbnail_url
+# at the raw.githubusercontent.com copy. No app change is needed — the
+# app already reads thumbnail_url.
+#
+# Why every 6 hours (not 30 min like auto-translate): this workflow
+# edits the same videos.json as auto-translate. A low cadence keeps the
+# chance of both running at once small; if a push is ever rejected
+# (non-fast-forward because the other workflow pushed first), that run
+# just fails safely — nothing is lost, the next run retries.
+# Pushes made with GITHUB_TOKEN do not re-trigger workflows, so the
+# commit here cannot loop.
+#
+# No API keys anywhere. Network use: episode video downloads + the
+# CLIP model download on first use (cached between runs, see below).
+name: Auto-thumbnails
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+# Never run two thumbnail jobs at once (they would both edit videos.json).
+concurrency:
+  group: auto-thumbnails
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  thumbnails:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Install system tools (ffmpeg)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # CPU-only torch (the default PyPI torch is the big CUDA build).
+      # Install it first so sentence-transformers reuses it instead of
+      # pulling its own torch.
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install sentence-transformers Pillow
+
+      # Both CLIP models (~520 MB text + ~580 MB image) are downloaded
+      # by the script on first use.
+      # sentence-transformers 6.x caches it via the HF hub cache
+      # (~/.cache/huggingface/hub), NOT the legacy
+      # ~/.cache/torch/sentence_transformers — cache the hub dir.
+      - name: Restore CLIP model
+        id: clip-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface/hub
+          key: clip-ViT-B-32-multilingual-v1
+
+      - name: Run auto-thumbnails (max 5 episodes)
+        run: python tools/auto_thumbnails_action.py
+
+      - name: Commit and push (only if something changed)
+        run: |
+          set -e
+          if [ ! -f .auto-thumbnails-summary.json ]; then
+            echo "No summary file — the script did not run. Failing."
+            exit 1
+          fi
+          CHANGED=$(python -c "import json; print(' '.join(json.load(open('.auto-thumbnails-summary.json'))['changed_paths']))")
+          if [ -z "$CHANGED" ]; then
+            echo "Nothing to do — no thumbnails created, no manifest change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # shellcheck disable=SC2086
+          git add $CHANGED
+          MSG=$(python -c "import json; print(json.load(open('.auto-thumbnails-summary.json'))['commit_message'])")
+          git commit -m "$MSG"
+          git push
