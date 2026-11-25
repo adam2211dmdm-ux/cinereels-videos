@@ -10,7 +10,7 @@ videos.json, and leaves the commit+push to the workflow step (GITHUB_TOKEN).
 Ported logic (validated 2026-11-23 on the local watcher):
 - Candidates: published episodes with a video_url but NO subtitle URLs
   (either language missing) and not flagged burned_subs. Web-page
-  episodes are skipped (no direct video to transcribe). Max 2 per run.
+  episodes are skipped (no direct video to transcribe). Max 8 per run.
 - Transcription: faster-whisper `small`, int8, beam_size=1, vad_filter.
   No speech -> skip, mark nothing.
 - Burned-in detection: bottom 22% band, PIL luminance threshold 190 +
@@ -60,7 +60,7 @@ RAW_BASE = ("https://raw.githubusercontent.com/adam2211dmdm-ux/"
 ARGOS_MODELS_DIR = os.environ.get("ARGOS_MODELS_DIR",
                                   os.path.join(REPO_ROOT, "models-ct2"))
 WORK = os.environ.get("RUNNER_TEMP", "/tmp") + "/auto_translate_action"
-MAX_PER_RUN = 2
+MAX_PER_RUN = 8
 os.makedirs(WORK, exist_ok=True)
 os.makedirs(SUBS_DIR, exist_ok=True)
 
