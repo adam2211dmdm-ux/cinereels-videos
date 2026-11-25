@@ -361,13 +361,44 @@ def main():
         if hits >= 2:
             v["burned_subs"] = True
             changed = True
+            # v1.37: burned-in subs are in the audio language. When the
+            # audio is English, the burned text is English — still make
+            # an ARABIC subtitle file, so the app can show Arabic over
+            # the burned English on its dark box. English needs no file
+            # (already in the picture). Arabic audio: the burned text
+            # is already Arabic, nothing to add.
+            verdict = "burned_in"
+            detail = "OCR hits %d/%d frames" % (hits, nframes)
+            if data["language"] == "en":
+                try:
+                    ar_segments = translate_segments(data["segments"],
+                                                     "en", "ar")
+                except Exception as e:
+                    print("SKIP %s: AR translation for burned-in ep failed: %s"
+                          % (ep_id, e))
+                    ar_segments = None
+                if ar_segments:
+                    fname = vtt_basename(v, "ar")
+                    fpath = os.path.join(SUBS_DIR, fname)
+                    write_vtt(fpath, titles["ar"], num, "Arabic", "ar",
+                              ar_segments, translated=True)
+                    rel = "subtitles/drama/" + fname
+                    v["subtitles_ar_url"] = RAW_BASE + "/" + rel
+                    if rel not in summary["changed_paths"]:
+                        summary["changed_paths"].append(rel)
+                    verdict = "burned_in_ar"
+                    detail += "; AR vtt added"
+                    msgs.append("ep%d burned-in subs, AR added" % num)
+                else:
+                    msgs.append("ep%d burned-in subs" % num)
+            else:
+                msgs.append("ep%d burned-in subs" % num)
             summary["actions"].append({"id": ep_id, "episode_number": num,
-                                       "verdict": "burned_in",
-                                       "detail": "OCR hits %d/%d frames"
-                                                 % (hits, nframes)})
-            msgs.append("ep%d burned-in subs" % num)
+                                       "verdict": verdict,
+                                       "detail": detail})
             done += 1
-            print("BURNED_IN %s (%d/%d frames)" % (ep_id, hits, nframes))
+            print("BURNED_IN %s (%d/%d frames)%s" % (ep_id, hits, nframes,
+                  " +AR" if verdict == "burned_in_ar" else ""))
             cleanup(ep_id)
             continue
         lang = data["language"]
