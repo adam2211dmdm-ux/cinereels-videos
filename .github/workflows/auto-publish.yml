@@ -1,0 +1,69 @@
+name: Auto-publish series
+
+# Adam imports a series in the app's Admin and taps "Publish for
+# everyone" — the app opens a pre-filled GitHub issue. This workflow
+# (every 30 min) turns the oldest open "[CineReels Publish]" issue
+# into a public series: harvest the streams via APIShort, bake them
+# into videos.json, commit, and close the issue. No secrets beyond
+# GITHUB_TOKEN; the harvest is anonymous (no API key anywhere).
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Ensure publish label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create publish --color 0E8A16 --description "Auto-publish request from the app" || true
+
+      - name: Publish one pending series
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python3 tools/auto_publish_action.py
+
+      - name: Commit manifest
+        id: commit
+        run: |
+          if [ ! -f publish-result.txt ] || ! grep -q '^changed=true' publish-result.txt; then
+            echo "nothing to publish"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          TITLE=$(grep '^title=' publish-result.txt | cut -d= -f2-)
+          EPS=$(grep '^episodes=' publish-result.txt | cut -d= -f2-)
+          PROVIDER=$(grep '^provider=' publish-result.txt | cut -d= -f2-)
+          git config user.name "cinereels-bot"
+          git config user.email "cinereels-bot@users.noreply.github.com"
+          git pull --rebase origin main
+          git add videos.json
+          git commit -m "Add ${TITLE} — ${EPS} episodes (${PROVIDER})"
+          git push origin main
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Close issue
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE=$(grep '^issue=' publish-result.txt | cut -d= -f2-)
+          TITLE=$(grep '^title=' publish-result.txt | cut -d= -f2-)
+          EPS=$(grep '^episodes=' publish-result.txt | cut -d= -f2-)
+          gh issue close "$ISSUE" --comment "✅ Published: ${TITLE} — ${EPS} episodes are now live in the catalog for everyone. Arabic subtitles will generate automatically over the next hours."
