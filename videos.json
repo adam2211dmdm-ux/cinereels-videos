@@ -8700,8 +8700,8 @@
    "duration_sec": 93,
    "video_url": "https://v-mps.crazymaplestudios.com/4071f66ee80171eebfe436a5e8aa0102/h264-narrow-ld.m3u8",
    "thumbnail_url": "https://v-mps.crazymaplestudios.com/images/3aeffed0-e779-11ee-94ca-b3f9375866ba.jpg",
-   "subtitles_en_url": null,
-   "subtitles_ar_url": null,
+   "subtitles_en_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode13_en.vtt",
+   "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode13_ar.vtt",
    "language": "en",
    "subtitle_default": "ar",
    "likes_count": 0,
@@ -8730,7 +8730,7 @@
    "video_url": "https://v-mps.crazymaplestudios.com/40eff280e80171ee98461426d1900102/h264-narrow-ld.m3u8",
    "thumbnail_url": "https://v-mps.crazymaplestudios.com/images/3aeffed0-e779-11ee-94ca-b3f9375866ba.jpg",
    "subtitles_en_url": null,
-   "subtitles_ar_url": null,
+   "subtitles_ar_url": "https://raw.githubusercontent.com/adam2211dmdm-ux/cinereels-videos/main/subtitles/drama/prov-reelshort-65fc172307fa6beb36042c36-episode14_ar.vtt",
    "language": "en",
    "subtitle_default": "ar",
    "likes_count": 0,
@@ -8743,7 +8743,7 @@
    "status": "published",
    "coming_soon": false,
    "views": 0,
-   "burned_subs": false,
+   "burned_subs": true,
    "web_page": false
   },
   {
