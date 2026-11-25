@@ -86,7 +86,9 @@ def http_json(url, timeout=30):
 
 
 def as_list(data):
-    """APIShort wraps lists under various keys; return the list itself."""
+    """APIShort wraps lists under various keys; return the list itself.
+    Recurses into dict wrappers (e.g. ShortMax alleps is
+    {"data": {"episodes": [...]}} — "data" is a dict, not a list)."""
     if isinstance(data, list):
         return data
     if isinstance(data, dict):
@@ -94,6 +96,10 @@ def as_list(data):
             v = data.get(k)
             if isinstance(v, list):
                 return v
+            if isinstance(v, dict):
+                r = as_list(v)
+                if r:
+                    return r
     return []
 
 
@@ -148,46 +154,44 @@ def parse_body(body):
 # ---------------------------------------------------------------- harvest
 
 def harvest_reelshort(book_id, want_eps):
+    # v1.38 fix (verified live 2026-11-25): the /play endpoint IGNORES
+    # chapter_id — it returns episode 1's streams for every chapter, so
+    # the old per-chapter play loop baked episode 1's URL 51 times.
+    # /allepisodes returns every episode's own streams in ONE call;
+    # the -ld (540p H264) file is derived from each episode's own
+    # h264-narrow-sd.m3u8 (same base path, -ld instead of -sd).
     detail, _ = http_json("%s/reelshort/detail/%s" % (API, book_id))
     d = detail if isinstance(detail, dict) else {}
     book = d.get("data", d) if isinstance(d.get("data", d), dict) else d
-    cover = pick(book, "cover", "coverUrl", "poster", "image")
+    # v1.38: the detail object carries the poster as "pic" (not
+    # "cover") — the old keys returned empty, so a published ReelShort
+    # series got a blank cover.
+    cover = pick(book, "pic", "cover", "coverUrl", "poster", "image")
     title = pick(book, "title", "bookName", "name")
     desc = pick(book, "desc", "description", "synopsis")
-    chs, _ = http_json("%s/reelshort/chapters/%s" % (API, book_id))
-    chapters = as_list(chs)
-    if not chapters:
-        raise HarvestError("ReelShort: no chapters for book %s" % book_id)
+    all_eps, _ = http_json("%s/reelshort/allepisodes/%s" % (API, book_id))
+    rows = as_list(all_eps)
+    if not rows:
+        raise HarvestError("ReelShort: no episodes for book %s" % book_id)
     eps = []
-    for i, ch in enumerate(chapters):
-        cid = pick(ch, "chapter_id", "chapterId", "id", "chapter_id_str")
-        if not cid:
-            continue
-        play, _ = http_json(
-            "%s/reelshort/play/%s?chapter_id=%s" % (API, book_id, cid))
-        urls = []
-        p = play.get("data", play) if isinstance(play, dict) else {}
-        vl = p.get("videoList") or p.get("video_list") or []
-        if isinstance(vl, list):
-            for u in vl:
-                if isinstance(u, dict):
-                    urls.append(pick(u, "videoUrl", "url", "playUrl"))
-                elif isinstance(u, str):
-                    urls.append(u)
+    for row in rows:
         url = ""
-        for u in urls:
-            if u and "-ld" in u:
+        for s in (row.get("streams") or []):
+            u = s.get("url", "") if isinstance(s, dict) else ""
+            if not u:
+                continue
+            if "-ld.m3u8" in u:
                 url = u
                 break
-        if not url:
-            url = urls[1] if len(urls) > 1 else (urls[0] if urls else "")
+            if not url and "h264-narrow-sd.m3u8" in u:
+                url = u.replace("h264-narrow-sd.m3u8", "h264-narrow-ld.m3u8")
         if not url:
             continue
         eps.append({
             "n": len(eps) + 1,
             "url": url,
-            "chapter_id": str(cid),
-            "duration": int(pick(ch, "duration", "durationSec", default=90) or 90),
+            "chapter_id": str(pick(row, "id", "chapter_id", "chapterId", default="")),
+            "duration": int(pick(row, "duration", "durationSec", default=90) or 90),
         })
     if not eps:
         raise HarvestError("ReelShort: no playable episodes for %s" % book_id)
@@ -200,9 +204,12 @@ def harvest_dramabox(book_id, lang):
         % (API, book_id, lang))
     d = detail if isinstance(detail, dict) else {}
     book = d.get("data", d) if isinstance(d.get("data", d), dict) else d
-    cover = pick(book, "cover", "coverUrl", "poster", "image")
+    # v1.38: the live detail object is FLAT with coverWap (not
+    # "cover") and "introduction" (not "desc") — the old keys returned
+    # empty, so a published DramaBox series got a blank cover.
+    cover = pick(book, "coverWap", "cover", "coverUrl", "poster", "image")
     title = pick(book, "bookName", "title", "name")
-    desc = pick(book, "desc", "description", "synopsis")
+    desc = pick(book, "desc", "description", "introduction", "synopsis")
     alleps, _ = http_json(
         "%s/dramabox/api/dramabox/allepisode?bookId=%s" % (API, book_id))
     rows = as_list(alleps)
@@ -246,11 +253,11 @@ def harvest_netshort(book_id, want_eps):
     # Try one search for a cover, best-effort.
     cover = ""
     try:
-        res, _ = http_json("%s/netshort/api/search?query=%s"
+        res, _ = http_json("%s/netshort/api/search?lang=en&q=%s&page=1"
                            % (API, urllib.request.quote(book_id)))
         for row in as_list(res):
             if str(pick(row, "shortPlayId", "id", default="")) == str(book_id):
-                cover = pick(row, "cover", "coverUrl", "poster", "image")
+                cover = pick(row, "shortPlayCover", "cover", "coverUrl", "poster", "image")
                 break
     except Exception:
         cover = ""
