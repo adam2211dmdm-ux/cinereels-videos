@@ -52,11 +52,26 @@ jobs:
           PROVIDER=$(grep '^provider=' publish-result.txt | cut -d= -f2-)
           git config user.name "cinereels-bot"
           git config user.email "cinereels-bot@users.noreply.github.com"
-          git pull --rebase origin main
+          # Commit FIRST, then pull --rebase: pulling with the script's
+          # videos.json edit still unstaged makes git refuse the rebase
+          # ("cannot pull with rebase: You have unstaged changes", exit
+          # 128) — that killed runs #4 and #5 on 2026-11-25.
           git add videos.json
           git commit -m "Add ${TITLE} — ${EPS} episodes (${PROVIDER})"
-          git push origin main
-          echo "pushed=true" >> "$GITHUB_OUTPUT"
+          # Retry pull+push: the auto-translate Action commits subtitles
+          # to videos.json every 30 min, so a push can lose the race to
+          # a fresh subtitle commit. On rebase conflict, abort and retry;
+          # a failed run retries from a fresh checkout next schedule.
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push origin main; then
+              echo "pushed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            git rebase --abort || true
+            sleep 10
+          done
+          echo "push failed after 3 attempts"
+          exit 1
 
       - name: Close issue
         if: steps.commit.outputs.pushed == 'true'
