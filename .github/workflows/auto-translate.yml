@@ -1,12 +1,13 @@
 # CineReels auto-translate — runs WITHOUT any human approval.
 #
-# Every 30 minutes (and whenever videos.json changes, i.e. Adam publishes a
+# Every 10 minutes (and whenever videos.json changes, i.e. Adam publishes a
 # new episode) this workflow finds published episodes that have a video but
 # no subtitles, transcribes them with faster-whisper, detects burned-in
 # subtitles with OCR, translates EN<->AR with Argos Translate packages
 # (Helsinki-NLP Opus-MT, pre-converted CTranslate2 models, offline, CPU),
 # writes .vtt files, updates videos.json, and commits + pushes with
-# GITHUB_TOKEN.
+# GITHUB_TOKEN. Max 8 episodes per run (2026-11-25: raised from 2 — Adam
+# asked to speed the process up).
 #
 # No approval tap is needed: pushes made with GITHUB_TOKEN do not
 # re-trigger workflows, so the push-on-videos.json trigger cannot loop.
@@ -16,7 +17,7 @@ name: Auto-translate subtitles
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/10 * * * *"
   workflow_dispatch:
   push:
     paths:
@@ -33,7 +34,7 @@ permissions:
 jobs:
   translate:
     runs-on: ubuntu-latest
-    timeout-minutes: 55
+    timeout-minutes: 120
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -118,7 +119,7 @@ jobs:
           PY
           ls models-ct2/translate-en_ar/en_ar models-ct2/translate-ar_en/ar_en
 
-      - name: Run auto-translate (max 2 episodes)
+      - name: Run auto-translate (max 8 episodes)
         run: python tools/auto_translate_action.py
 
       - name: Commit and push (only if something changed)
