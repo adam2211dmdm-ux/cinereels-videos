@@ -28,6 +28,12 @@ Per-provider rules (verified 2026-11-24):
   EMPTY video_url + provider + provider_chapter_id so the app resolves
   the stream live at play time. ShortMax is best-effort (its segments
   may carry custom encryption a stock player cannot play).
+- GoodShort (v1.40): book + chapters; chapters are SIGNED HLS m3u8 —
+  bake EMPTY video_url + chapter numbers, live-resolve at play.
+  Cover from book.cover.
+- Anichin (v1.40): NO separate harvester — an issue with
+  source=anichin is harvested via APIShort by provider (same provider
+  names overlap) and published with provider_source=apishort.
 - Sansekai: bandwidth-blocked — never harvest from it. If an issue
   carries source=sansekai, try the same provider via APIShort instead;
   if APIShort has no such provider, comment + close as failed.
@@ -276,11 +282,46 @@ def harvest_netshort(book_id, want_eps):
     return {"cover": cover, "title": "", "desc": "", "episodes": eps}
 
 
+def harvest_goodshort(book_id, want_eps):
+    # v1.40: GoodShort via APIShort. Detail = /book/{id}?lang=en (NOT
+    # /detail — 404); episodes = /chapters/{id}?lang=en (NOT
+    # /allepisodes — 404). Chapters return SIGNED HLS m3u8 with an
+    # expiry token — bake EMPTY video_url + chapter numbers so the app
+    # resolves the stream live at play time (same class as ShortMax /
+    # NetShort). Cover comes from book.cover (acfs1.goodreels.com).
+    book, _ = http_json("%s/goodshort/book/%s?lang=en" % (API, book_id))
+    b = book.get("data", {}).get("book", {}) if isinstance(book, dict) else {}
+    cover = pick(b, "cover", "bookDetailCover", "coverUrl", "poster", "image")
+    title = pick(b, "bookName", "title", "name")
+    desc = pick(b, "introduction", "desc", "description", "synopsis")
+    chapters, _ = http_json("%s/goodshort/chapters/%s?lang=en" % (API, book_id))
+    rows = as_list(chapters)
+    if not rows:
+        raise HarvestError("GoodShort: no episodes for book %s" % book_id)
+    eps = []
+    for row in rows:
+        idx = row.get("index")
+        n = (int(idx) + 1) if idx is not None else len(eps) + 1
+        try:
+            dur = int(row.get("playTime") or 90)
+        except (TypeError, ValueError):
+            dur = 90
+        eps.append({
+            "n": n,
+            "url": "",  # signed HLS — resolved live at play
+            "chapter_id": str(n),
+            "duration": dur,
+        })
+    eps.sort(key=lambda e: e["n"])
+    return {"cover": cover, "title": title, "desc": desc, "episodes": eps}
+
+
 HARVESTERS = {
     "reelshort": harvest_reelshort,
     "dramabox": harvest_dramabox,
     "shortmax": harvest_shortmax,
     "netshort": harvest_netshort,
+    "goodshort": harvest_goodshort,
 }
 
 
@@ -314,7 +355,10 @@ def main():
 
     if not sid or not provider or not book_id:
         return fail("the issue is missing series_id / provider / book_id.")
-    if source == "sansekai" and provider in HARVESTERS:
+    # v1.40: Anichin issues harvest via APIShort by provider (the
+    # provider names overlap) — no separate Anichin harvester here;
+    # the published series resolves through APIShort in the app.
+    if source in ("sansekai", "anichin") and provider in HARVESTERS:
         source = "apishort"  # Sansekai is bandwidth-blocked; same provider via APIShort
     if provider not in HARVESTERS:
         return fail("provider '%s' is not supported for auto-publish." % provider)
@@ -335,6 +379,8 @@ def main():
             res = harvest_reelshort(book_id, want_eps)
         elif provider == "shortmax":
             res = harvest_shortmax(book_id, want_eps)
+        elif provider == "goodshort":
+            res = harvest_goodshort(book_id, want_eps)
         else:
             res = harvest_netshort(book_id, want_eps)
     except QuotaOut as e:
