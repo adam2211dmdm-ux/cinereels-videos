@@ -1,16 +1,17 @@
 # CineReels auto-translate — runs WITHOUT any human approval.
 #
-# Every 10 minutes (and whenever videos.json changes, i.e. Adam publishes a
+# Every 10 minutes (and whenever videos.enc changes, i.e. Adam publishes a
 # new episode) this workflow finds published episodes that have a video but
 # no subtitles, transcribes them with faster-whisper, detects burned-in
 # subtitles with OCR, translates EN<->AR with Argos Translate packages
 # (Helsinki-NLP Opus-MT, pre-converted CTranslate2 models, offline, CPU),
-# writes .vtt files, updates videos.json, and commits + pushes with
+# writes .vtt files, updates videos.enc, and commits + pushes with
 # GITHUB_TOKEN. Max 8 episodes per run (2026-11-25: raised from 2 — Adam
-# asked to speed the process up).
+# asked to speed the process up). The manifest key/IV come from repo
+# secrets MANIFEST_KEY / MANIFEST_IV.
 #
 # No approval tap is needed: pushes made with GITHUB_TOKEN do not
-# re-trigger workflows, so the push-on-videos.json trigger cannot loop.
+# re-trigger workflows, so the push-on-videos.enc trigger cannot loop.
 # The old 30-min Muse cron (cinereels-auto-translate) must NOT push the
 # same files anymore once this is live — it becomes a daily monitor only.
 name: Auto-translate subtitles
@@ -21,7 +22,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "videos.json"
+      - "videos.enc"
 
 # Never run two translations at once (they would both edit videos.json).
 concurrency:
@@ -120,6 +121,9 @@ jobs:
           ls models-ct2/translate-en_ar/en_ar models-ct2/translate-ar_en/ar_en
 
       - name: Run auto-translate (max 8 episodes)
+        env:
+          MANIFEST_KEY: ${{ secrets.MANIFEST_KEY }}
+          MANIFEST_IV: ${{ secrets.MANIFEST_IV }}
         run: python tools/auto_translate_action.py
 
       - name: Commit and push (only if something changed)
