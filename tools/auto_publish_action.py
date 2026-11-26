@@ -41,6 +41,7 @@ import re
 import sys
 import urllib.request
 import urllib.error
+import urllib.parse
 
 UA = {"User-Agent": "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36"}
 API = "https://apishort.com/v1"
@@ -250,15 +251,21 @@ def harvest_shortmax(book_id, want_eps):
 
 def harvest_netshort(book_id, want_eps):
     # No stable URLs to bake; the app resolves each episode live.
-    # Try one search for a cover, best-effort.
+    # Cover comes from the drama detail endpoint: the old best-effort
+    # search by numeric book id returned nothing, so published NetShort
+    # series always got a blank cover (blank posters in the app).
+    # Percent-encode the URL: it carries non-ASCII characters and the
+    # app fetches cover_url with a raw URL.
     cover = ""
     try:
-        res, _ = http_json("%s/netshort/api/search?lang=en&q=%s&page=1"
-                           % (API, urllib.request.quote(book_id)))
-        for row in as_list(res):
-            if str(pick(row, "shortPlayId", "id", default="")) == str(book_id):
-                cover = pick(row, "shortPlayCover", "cover", "coverUrl", "poster", "image")
-                break
+        res, _ = http_json("%s/netshort/api/drama/%s?lang=en" % (API, book_id))
+        data = res.get("data", {}) if isinstance(res, dict) else {}
+        raw = pick(data, "shortPlayCover", "cover", "coverUrl", "poster", "image")
+        if raw:
+            parts = urllib.parse.urlsplit(raw)
+            cover = urllib.parse.urlunsplit((parts.scheme, parts.netloc,
+                                             urllib.parse.quote(parts.path),
+                                             parts.query, parts.fragment))
     except Exception:
         cover = ""
     n = int(want_eps or 0)
@@ -339,6 +346,16 @@ def main():
     eps = res["episodes"]
     lang = "ar" if (provider == "dramabox" and title_ar) else "en"
     cover = res["cover"] or ""
+    # Episode thumbnails are origin-checked by the app
+    # (ManifestLoader.isSameOriginManifest): a foreign-host thumbnail
+    # rejects the WHOLE remote manifest. Series cover_url is NOT
+    # checked, so a foreign cover is fine there — episode rows fall
+    # back to the series cover in the app (HomeActivity).
+    ALLOWED_THUMB_HOSTS = ("raw.githubusercontent.com", "narto-drama.com",
+        "img.nartodrama-api.online", "v-mps.crazymaplestudios.com",
+        "v-img.crazymaplestudios.com", "hwztakavideoto.dramaboxdb.com",
+        "hwztchapter.dramaboxdb.com")
+    thumb = cover if cover and urllib.parse.urlsplit(cover).netloc in ALLOWED_THUMB_HOSTS else ""
     series = {
         "category_id": "drama",
         "cover_url": cover,
@@ -367,7 +384,7 @@ def main():
             "category": "drama",
             "duration_sec": e["duration"],
             "video_url": e["url"],
-            "thumbnail_url": cover,
+            "thumbnail_url": thumb,
             "language": lang,
             "subtitle_default": "ar",
             "likes_count": 0,
