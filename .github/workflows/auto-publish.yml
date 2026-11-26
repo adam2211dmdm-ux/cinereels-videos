@@ -4,8 +4,9 @@ name: Auto-publish series
 # everyone" — the app opens a pre-filled GitHub issue. This workflow
 # (every 30 min) turns the oldest open "[CineReels Publish]" issue
 # into a public series: harvest the streams via APIShort, bake them
-# into videos.json, commit, and close the issue. No secrets beyond
-# GITHUB_TOKEN; the harvest is anonymous (no API key anywhere).
+# into videos.enc, commit, and close the issue. The manifest key/IV
+# come from repo secrets MANIFEST_KEY / MANIFEST_IV; the harvest is
+# anonymous (no API key anywhere).
 on:
   schedule:
     - cron: '*/30 * * * *'
@@ -37,6 +38,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          MANIFEST_KEY: ${{ secrets.MANIFEST_KEY }}
+          MANIFEST_IV: ${{ secrets.MANIFEST_IV }}
         run: python3 tools/auto_publish_action.py
 
       - name: Commit manifest
@@ -53,13 +56,13 @@ jobs:
           git config user.name "cinereels-bot"
           git config user.email "cinereels-bot@users.noreply.github.com"
           # Commit FIRST, then pull --rebase: pulling with the script's
-          # videos.json edit still unstaged makes git refuse the rebase
+          # videos.enc edit still unstaged makes git refuse the rebase
           # ("cannot pull with rebase: You have unstaged changes", exit
           # 128) — that killed runs #4 and #5 on 2026-11-25.
-          git add videos.json
+          git add videos.enc
           git commit -m "Add ${TITLE} — ${EPS} episodes (${PROVIDER})"
           # Retry pull+push: the auto-translate Action commits subtitles
-          # to videos.json every 30 min, so a push can lose the race to
+          # to videos.enc every 30 min, so a push can lose the race to
           # a fresh subtitle commit. On rebase conflict, abort and retry;
           # a failed run retries from a fresh checkout next schedule.
           for i in 1 2 3; do
