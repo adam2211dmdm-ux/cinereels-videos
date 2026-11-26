@@ -32,9 +32,12 @@ Ported logic (validated 2026-11-23 on the local watcher):
   File name: `<series_id>-episode<N>_<lang>.vtt` (or the basename of an
   already-present subtitle URL for that episode, if one language exists).
 - Manifest: ONLY the processed episode's subtitles_en_url /
-  subtitles_ar_url / burned_subs fields are touched. Written back with
-  indent=1, raw UTF-8, no trailing newline (the file's existing format).
-  The manifest signature (.sig) is RETIRED since app v1.24 — this script
+  subtitles_ar_url / burned_subs fields are touched. Written back
+  encrypted: the catalog on disk is videos.enc (base64 single-line
+  AES-256-CBC of the JSON, indent=1, raw UTF-8, no trailing newline) —
+  decrypt with MANIFEST_KEY / MANIFEST_IV (repo secrets) at start,
+  re-encrypt on write. NEVER write a plaintext videos.json. The
+  manifest signature (.sig) is RETIRED since app v1.24 — this script
   never reads or writes any .sig file.
 - Downloads that fail (e.g. dead CDN links) are skipped WITHOUT marking
   anything, so a later run retries them.
@@ -42,6 +45,7 @@ Ported logic (validated 2026-11-23 on the local watcher):
   the changed paths + a commit message for the workflow step. Exit 0
   always unless the manifest itself cannot be read.
 """
+import base64
 import json
 import os
 import shutil
@@ -53,7 +57,7 @@ from datetime import date
 from PIL import Image
 
 REPO_ROOT = os.getcwd()
-MANIFEST_PATH = os.path.join(REPO_ROOT, "videos.json")
+MANIFEST_PATH = os.path.join(REPO_ROOT, "videos.enc")
 SUBS_DIR = os.path.join(REPO_ROOT, "subtitles", "drama")
 RAW_BASE = ("https://raw.githubusercontent.com/adam2211dmdm-ux/"
             "cinereels-videos/main")
@@ -67,6 +71,49 @@ os.makedirs(SUBS_DIR, exist_ok=True)
 
 def run(cmd, timeout=300):
     return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+
+
+# ---------------------------------------------------------------- manifest crypto
+# v1.48: the catalog on disk is videos.enc (base64 single-line AES-256-CBC).
+# Key/IV come from the MANIFEST_KEY / MANIFEST_IV env vars (repo secrets).
+# openssl does the cipher — no extra pip dependency on the runner.
+
+def manifest_crypto():
+    """(key_hex, iv_hex) from env. Raises RuntimeError when missing."""
+    key = os.environ.get("MANIFEST_KEY", "")
+    iv = os.environ.get("MANIFEST_IV", "")
+    if len(key) != 64 or len(iv) != 32:
+        raise RuntimeError("MANIFEST_KEY/IV missing or wrong length "
+                           "(need 64/32 hex chars)")
+    return key, iv
+
+
+def load_manifest():
+    """Decrypt videos.enc -> parsed manifest dict."""
+    key, iv = manifest_crypto()
+    with open(MANIFEST_PATH, encoding="utf-8") as f:
+        raw = base64.b64decode(f.read().strip())
+    r = subprocess.run(["openssl", "enc", "-d", "-aes-256-cbc",
+                        "-K", key, "-iv", iv],
+                       input=raw, capture_output=True)
+    if r.returncode != 0:
+        raise RuntimeError("manifest decrypt failed (openssl exit %d)"
+                           % r.returncode)
+    return json.loads(r.stdout.decode("utf-8"))
+
+
+def save_manifest(manifest):
+    """Serialize (indent=1, no trailing newline) -> encrypt -> videos.enc."""
+    key, iv = manifest_crypto()
+    text = json.dumps(manifest, ensure_ascii=False, indent=1)
+    r = subprocess.run(["openssl", "enc", "-aes-256-cbc",
+                        "-K", key, "-iv", iv],
+                       input=text.encode("utf-8"), capture_output=True)
+    if r.returncode != 0:
+        raise RuntimeError("manifest encrypt failed (openssl exit %d)"
+                           % r.returncode)
+    with open(MANIFEST_PATH, "w", encoding="utf-8") as f:
+        f.write(base64.b64encode(r.stdout).decode("ascii") + "\n")
 
 
 def fmt_time(sec):
@@ -285,8 +332,7 @@ def vtt_basename(video, lang):
 
 def main():
     try:
-        with open(MANIFEST_PATH, encoding="utf-8") as f:
-            manifest = json.load(f)
+        manifest = load_manifest()
     except Exception as e:
         print(json.dumps({"error": "manifest read failed: %s" % e}))
         return 1
@@ -448,10 +494,9 @@ def main():
               % (ep_id, len(data["segments"]), lang))
         cleanup(ep_id)
     if changed:
-        with open(MANIFEST_PATH, "w", encoding="utf-8") as f:
-            json.dump(manifest, f, ensure_ascii=False, indent=1)
-        if "videos.json" not in summary["changed_paths"]:
-            summary["changed_paths"].insert(0, "videos.json")
+        save_manifest(manifest)
+        if "videos.enc" not in summary["changed_paths"]:
+            summary["changed_paths"].insert(0, "videos.enc")
         summary["commit_message"] = (
             "Auto-translate subtitles: " + "; ".join(msgs))
     with open(os.path.join(REPO_ROOT, ".auto-translate-summary.json"),

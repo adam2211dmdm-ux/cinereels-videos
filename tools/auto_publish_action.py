@@ -10,9 +10,9 @@ open "[CineReels Publish]" issue into a public series:
   1. list open issues titled "[CineReels Publish] ..." (oldest first)
   2. parse the body (series_id / title_en / title_ar / provider /
      book_id / source / episodes)
-  3. if the series is already in videos.json -> comment + close, done
+  3. if the series is already in videos.enc -> comment + close, done
   4. harvest the streams via APIShort (anonymous, no key) and merge the
-     series into videos.json; the workflow step commits + pushes, then
+     series into videos.enc; the workflow step commits + pushes, then
      closes the issue
   5. permanent failures (book not found, unknown provider) -> comment
      the reason + close, so they never retry forever
@@ -38,12 +38,18 @@ Per-provider rules (verified 2026-11-24):
   carries source=sansekai, try the same provider via APIShort instead;
   if APIShort has no such provider, comment + close as failed.
 
-Manifest rules: indent=1, raw UTF-8, no trailing newline. Never touch
-any other series. Never put any API key in any file or commit.
+Manifest rules: the catalog on disk is videos.enc — base64 single-line
+AES-256-CBC of the JSON (indent=1, raw UTF-8, no trailing newline).
+Decrypt with MANIFEST_KEY / MANIFEST_IV (repo secrets) at start, work
+on the plaintext in memory, re-encrypt on write. NEVER write a
+plaintext videos.json. Never touch any other series. Never put any API
+key in any file or commit.
 """
+import base64
 import json
 import os
 import re
+import subprocess
 import sys
 import urllib.request
 import urllib.error
@@ -54,6 +60,57 @@ API = "https://apishort.com/v1"
 TOKEN = os.environ.get("GITHUB_TOKEN", "")
 REPO = os.environ.get("GITHUB_REPOSITORY", "adam2211dmdm-ux/cinereels-videos")
 RESULT = "publish-result.txt"
+MANIFEST_ENC = "videos.enc"
+
+
+# ---------------------------------------------------------------- manifest crypto
+# v1.48: the catalog on disk is videos.enc (base64 single-line AES-256-CBC).
+# Key/IV come from the MANIFEST_KEY / MANIFEST_IV env vars (repo secrets
+# set from the same key file the app build uses). openssl is used for the
+# cipher — no extra pip dependency on the runner.
+
+def manifest_crypto():
+    """(key_hex, iv_hex) from env. Raises HarvestError when missing."""
+    key = os.environ.get("MANIFEST_KEY", "")
+    iv = os.environ.get("MANIFEST_IV", "")
+    if len(key) != 64 or len(iv) != 32:
+        raise HarvestError("MANIFEST_KEY/IV missing or wrong length "
+                           "(need 64/32 hex chars)")
+    return key, iv
+
+
+def load_manifest():
+    """Decrypt videos.enc -> parsed manifest dict."""
+    key, iv = manifest_crypto()
+    try:
+        with open(MANIFEST_ENC, encoding="utf-8") as fh:
+            raw = base64.b64decode(fh.read().strip())
+    except Exception as e:
+        raise HarvestError("cannot read %s: %s" % (MANIFEST_ENC, e))
+    r = subprocess.run(["openssl", "enc", "-d", "-aes-256-cbc",
+                        "-K", key, "-iv", iv],
+                       input=raw, capture_output=True)
+    if r.returncode != 0:
+        raise HarvestError("manifest decrypt failed (openssl exit %d)"
+                           % r.returncode)
+    try:
+        return json.loads(r.stdout.decode("utf-8"))
+    except Exception as e:
+        raise HarvestError("decrypted manifest is not JSON: %s" % e)
+
+
+def save_manifest(manifest):
+    """Serialize (indent=1, no trailing newline) -> encrypt -> videos.enc."""
+    key, iv = manifest_crypto()
+    text = json.dumps(manifest, ensure_ascii=False, indent=1)
+    r = subprocess.run(["openssl", "enc", "-aes-256-cbc",
+                        "-K", key, "-iv", iv],
+                       input=text.encode("utf-8"), capture_output=True)
+    if r.returncode != 0:
+        raise HarvestError("manifest encrypt failed (openssl exit %d)"
+                           % r.returncode)
+    with open(MANIFEST_ENC, "w", encoding="utf-8") as fh:
+        fh.write(base64.b64encode(r.stdout).decode("ascii") + "\n")
 
 
 class QuotaOut(Exception):
@@ -363,8 +420,11 @@ def main():
     if provider not in HARVESTERS:
         return fail("provider '%s' is not supported for auto-publish." % provider)
 
-    with open("videos.json", encoding="utf-8") as fh:
-        manifest = json.load(fh)
+    try:
+        manifest = load_manifest()
+    except HarvestError as e:
+        print("manifest unavailable: %s" % e, file=sys.stderr)
+        return 2
     if any(s.get("id") == sid for s in manifest.get("series", [])):
         comment_and_close(number, "✅ Already public — '%s' is already in the catalog." % (title_en or sid))
         with open(RESULT, "w", encoding="utf-8") as fh:
@@ -448,8 +508,11 @@ def main():
         })
     manifest.setdefault("series", []).append(series)
     manifest.setdefault("videos", []).extend(videos)
-    with open("videos.json", "w", encoding="utf-8") as fh:
-        json.dump(manifest, fh, ensure_ascii=False, indent=1)
+    try:
+        save_manifest(manifest)
+    except HarvestError as e:
+        print("manifest save failed: %s" % e, file=sys.stderr)
+        return 2
     with open(RESULT, "w", encoding="utf-8") as fh:
         fh.write("changed=true\n")
         fh.write("issue=%d\n" % number)
