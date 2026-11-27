@@ -4,13 +4,14 @@
 This is the end-to-end version of the local watcher
 (~/workspace/your_files/cinereels/tools/auto_translate.py). It runs on a
 GitHub-hosted runner with NO human approval: it transcribes, detects
-burned-in subtitles, translates EN<->AR, writes .vtt files, updates
-videos.json, and leaves the commit+push to the workflow step (GITHUB_TOKEN).
+burned-in subtitles, translates any detected language to EN+AR (via an
+English pivot), writes .vtt files, updates videos.json, and leaves the
+commit+push to the workflow step (GITHUB_TOKEN).
 
 Ported logic (validated 2026-11-23 on the local watcher):
 - Candidates: published episodes with a video_url but NO subtitle URLs
   (either language missing) and not flagged burned_subs. Web-page
-  episodes are skipped (no direct video to transcribe). Max 8 per run.
+  episodes are skipped (no direct video to transcribe). Max 16 per run.
 - Transcription: faster-whisper `small`, int8, beam_size=1, vad_filter.
   No speech -> skip, mark nothing.
 - Burned-in detection: bottom 22% band, PIL luminance threshold 190 +
@@ -25,8 +26,14 @@ Ported logic (validated 2026-11-23 on the local watcher):
   downloaded from the Argos package index and unzipped by the workflow
   into models-ct2/ (cached between runs); the script reads them from
   $ARGOS_MODELS_DIR (default ./models-ct2).
-  Detected ar -> translate to en; detected en -> translate to ar;
-  any other detected language -> translate to BOTH en and ar.
+  ANY detected language is translated to BOTH English and Arabic via
+  an English pivot: detected en -> ar directly; detected ar -> en
+  directly; any other language -> lang->en, then en->ar. The pivot is
+  required because the Argos index has almost no direct *->ar pairs
+  (e.g. id->ar does not exist, while id->en does). Pairs the workflow
+  did not pre-fetch (en<->ar only) are downloaded on demand by
+  ensure_model() from the same index, with retries, and cached in
+  memory for the run.
 - VTT format matches the existing files in subtitles/drama/: WEBVTT
   header + NOTE lines + numbered cues `HH:MM:SS.mmm --> HH:MM:SS.mmm`.
   File name: `<series_id>-episode<N>_<lang>.vtt` (or the basename of an
@@ -51,7 +58,9 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 import urllib.request
+import zipfile
 from datetime import date
 
 from PIL import Image
@@ -64,7 +73,7 @@ RAW_BASE = ("https://raw.githubusercontent.com/adam2211dmdm-ux/"
 ARGOS_MODELS_DIR = os.environ.get("ARGOS_MODELS_DIR",
                                   os.path.join(REPO_ROOT, "models-ct2"))
 WORK = os.environ.get("RUNNER_TEMP", "/tmp") + "/auto_translate_action"
-MAX_PER_RUN = 8
+MAX_PER_RUN = 16
 os.makedirs(WORK, exist_ok=True)
 os.makedirs(SUBS_DIR, exist_ok=True)
 
@@ -223,6 +232,84 @@ def transcribe(mp4, ep_id):
     return data, None
 
 
+ARGOS_INDEX_URL = ("https://raw.githubusercontent.com/argosopentech/"
+                     "argospm-index/main/index.json")
+ARGOS_UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) "
+                          "AppleWebKit/537.36 (KHTML, like Gecko) "
+                          "Chrome/120.0 Safari/537.36"}
+_MODEL_ENSURED = set()
+
+
+def ensure_model(src, dst):
+    """Make sure the Argos package src->dst exists under ARGOS_MODELS_DIR.
+
+    Packages pre-fetched by the workflow (en<->ar) are already on disk
+    and this is a no-op. Any other pair (e.g. id->en) is downloaded from
+    the Argos package index on demand, with a browser User-Agent +
+    3 retries (argos-net.com blocks Python's default UA), then unzipped
+    into models-ct2/translate-<src>_<dst>/. Downloads are remembered
+    in-memory for the run. Raises RuntimeError when the pair is absent
+    from the index or the download fails — the caller skips that
+    episode, same as any other failure.
+    """
+    key = (src, dst)
+    if key in _MODEL_ENSURED:
+        return
+    for cand in ("translate-%s_%s/%s_%s" % (src, dst, src, dst),
+                 "%s_%s/%s_%s" % (src, dst, src, dst),
+                 "%s_%s" % (src, dst)):
+        p = os.path.join(ARGOS_MODELS_DIR, cand)
+        if (os.path.exists(os.path.join(p, "sentencepiece.model"))
+                and os.path.exists(os.path.join(p, "model", "model.bin"))):
+            _MODEL_ENSURED.add(key)
+            return
+    try:
+        req = urllib.request.Request(ARGOS_INDEX_URL, headers=ARGOS_UA)
+        with urllib.request.urlopen(req, timeout=120) as r:
+            index = json.loads(r.read().decode("utf-8"))
+    except Exception as e:
+        raise RuntimeError("Argos index fetch failed: %s" % e)
+    url = None
+    for p in index:
+        if p.get("from_code") == src and p.get("to_code") == dst:
+            links = p.get("links") or []
+            if links:
+                url = links[0]
+            break
+    if not url:
+        raise RuntimeError("Argos model for %s -> %s is not in the package "
+                           "index (no direct pair)" % (src, dst))
+    os.makedirs(ARGOS_MODELS_DIR, exist_ok=True)
+    zpath = os.path.join(ARGOS_MODELS_DIR,
+                         "translate-%s_%s.argosmodel" % (src, dst))
+    last_err = None
+    for attempt in (1, 2, 3):
+        try:
+            req = urllib.request.Request(url, headers=ARGOS_UA)
+            with urllib.request.urlopen(req, timeout=600) as r, \
+                    open(zpath, "wb") as f:
+                f.write(r.read())
+            break
+        except Exception as e:
+            last_err = e
+            print("ensure_model %s->%s attempt %d failed: %s"
+                  % (src, dst, attempt, e))
+            if attempt == 3:
+                raise RuntimeError("Argos model download failed for "
+                                   "%s -> %s: %s" % (src, dst, last_err))
+            time.sleep(15)
+    with zipfile.ZipFile(zpath) as z:
+        z.extractall(os.path.join(ARGOS_MODELS_DIR,
+                                  "translate-%s_%s" % (src, dst)))
+    os.remove(zpath)
+    pkg = os.path.join(ARGOS_MODELS_DIR, "translate-%s_%s" % (src, dst))
+    if not (os.path.exists(os.path.join(pkg, "sentencepiece.model"))
+            and os.path.exists(os.path.join(pkg, "model", "model.bin"))):
+        raise RuntimeError("Argos model for %s -> %s extracted with an "
+                           "unexpected layout" % (src, dst))
+    _MODEL_ENSURED.add(key)
+
+
 class ArgosTranslator:
     """Argos Translate packages (Helsinki-NLP Opus-MT) via CTranslate2.
 
@@ -281,12 +368,30 @@ _TRANSLATOR = None
 def translate_segments(segments, src, dst):
     """Translate a list of {start, end, text} with Opus-MT (batched)."""
     global _TRANSLATOR
+    ensure_model(src, dst)
     if _TRANSLATOR is None:
         _TRANSLATOR = ArgosTranslator(ARGOS_MODELS_DIR)
     texts = [s["text"] for s in segments]
     out_texts = _TRANSLATOR.translate(texts, src, dst)
     return [{"start": s["start"], "end": s["end"], "text": t}
             for s, t in zip(segments, out_texts)]
+
+
+def translate_to_en_ar(segments, lang):
+    """Translate transcribed segments to BOTH English and Arabic.
+
+    Returns (en_segments, ar_segments). English is the pivot: direct
+    pairs to Arabic exist only for a few languages in the Argos index
+    (en->ar, ar->en), so any other detected language goes lang->en
+    first and the English result is then translated en->ar.
+    """
+    if lang == "en":
+        return segments, translate_segments(segments, "en", "ar")
+    if lang == "ar":
+        return translate_segments(segments, "ar", "en"), segments
+    en_segments = translate_segments(segments, lang, "en")
+    ar_segments = translate_segments(en_segments, "en", "ar")
+    return en_segments, ar_segments
 
 
 def write_vtt(path, series_title, ep_num, lang_name, lang_code,
@@ -415,26 +520,46 @@ def main():
             # is already Arabic, nothing to add.
             verdict = "burned_in"
             detail = "OCR hits %d/%d frames" % (hits, nframes)
-            if data["language"] == "en":
+            # v1.37: burned-in subs are in the audio language. The burned
+            # text is already in the picture, so add subtitle files for
+            # the OTHER languages via the English pivot (any detected
+            # language -> en -> ar). Arabic audio: the burned text is
+            # already Arabic, nothing to add.
+            blang = data["language"]
+            if blang != "ar":
                 try:
-                    ar_segments = translate_segments(data["segments"],
-                                                     "en", "ar")
+                    ben, bar = translate_to_en_ar(data["segments"], blang)
                 except Exception as e:
-                    print("SKIP %s: AR translation for burned-in ep failed: %s"
+                    print("SKIP %s: translation for burned-in ep failed: %s"
                           % (ep_id, e))
-                    ar_segments = None
-                if ar_segments:
+                    ben = bar = None
+                wrote = []
+                if blang != "en" and ben:
+                    fname = vtt_basename(v, "en")
+                    fpath = os.path.join(SUBS_DIR, fname)
+                    write_vtt(fpath, titles["en"], num, "English", "en",
+                              ben, translated=True)
+                    rel = "subtitles/drama/" + fname
+                    v["subtitles_en_url"] = RAW_BASE + "/" + rel
+                    if rel not in summary["changed_paths"]:
+                        summary["changed_paths"].append(rel)
+                    wrote.append("EN")
+                if bar:
                     fname = vtt_basename(v, "ar")
                     fpath = os.path.join(SUBS_DIR, fname)
                     write_vtt(fpath, titles["ar"], num, "Arabic", "ar",
-                              ar_segments, translated=True)
+                              bar, translated=True)
                     rel = "subtitles/drama/" + fname
                     v["subtitles_ar_url"] = RAW_BASE + "/" + rel
                     if rel not in summary["changed_paths"]:
                         summary["changed_paths"].append(rel)
-                    verdict = "burned_in_ar"
-                    detail += "; AR vtt added"
-                    msgs.append("ep%d burned-in subs, AR added" % num)
+                    wrote.append("AR")
+                if wrote:
+                    verdict = "burned_in_" + "".join(
+                        w.lower() for w in wrote)
+                    detail += "; %s vtt added" % "+".join(wrote)
+                    msgs.append("ep%d burned-in subs, %s added"
+                                % (num, "+".join(wrote)))
                 else:
                     msgs.append("ep%d burned-in subs" % num)
             else:
@@ -448,30 +573,15 @@ def main():
             cleanup(ep_id)
             continue
         lang = data["language"]
-        by_lang = {}
-        if lang in ("en", "ar"):
-            by_lang[lang] = data["segments"]
-            other = "ar" if lang == "en" else "en"
-            try:
-                by_lang[other] = translate_segments(data["segments"],
-                                                    lang, other)
-            except Exception as e:
-                print("SKIP %s: translation %s->%s failed: %s"
-                      % (ep_id, lang, other, e))
-                cleanup(ep_id)
-                continue
-        else:
-            # Detected language is neither en nor ar: translate to both.
-            try:
-                by_lang["en"] = translate_segments(data["segments"],
-                                                   lang, "en")
-                by_lang["ar"] = translate_segments(data["segments"],
-                                                   lang, "ar")
-            except Exception as e:
-                print("SKIP %s: translation from %s failed: %s"
-                      % (ep_id, lang, e))
-                cleanup(ep_id)
-                continue
+        try:
+            en_segments, ar_segments = translate_to_en_ar(data["segments"],
+                                                           lang)
+        except Exception as e:
+            print("SKIP %s: translation from %s failed: %s"
+                  % (ep_id, lang, e))
+            cleanup(ep_id)
+            continue
+        by_lang = {"en": en_segments, "ar": ar_segments}
         for code, lang_name in (("en", "English"), ("ar", "Arabic")):
             fname = vtt_basename(v, code)
             fpath = os.path.join(SUBS_DIR, fname)
