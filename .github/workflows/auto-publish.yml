@@ -2,15 +2,26 @@ name: Auto-publish series
 
 # Adam imports a series in the app's Admin and taps "Publish for
 # everyone" — the app opens a pre-filled GitHub issue. This workflow
-# (every 30 min) turns the oldest open "[CineReels Publish]" issue
-# into a public series: harvest the streams via APIShort, bake them
-# into videos.enc, commit, and close the issue. The manifest key/IV
-# come from repo secrets MANIFEST_KEY / MANIFEST_IV; the harvest is
-# anonymous (no API key anywhere).
+# turns the oldest open "[CineReels Publish]" issue into a public
+# series: harvest the streams via APIShort, bake them into videos.enc,
+# commit, and close the issue. It runs THE MOMENT an issue is opened
+# (issues trigger) so a publish lands within a minute or two of Adam
+# tapping submit; the 10-min schedule is only a backup for missed
+# events. Runs serialize (concurrency group) so two publishes never
+# race on videos.enc. The manifest key/IV come from repo secrets
+# MANIFEST_KEY / MANIFEST_IV; the harvest is anonymous (no API key
+# anywhere).
 on:
+  issues:
+    types: [opened]
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
+
+# Never run two publishes at once (they would both edit videos.enc).
+concurrency:
+  group: auto-publish
+  cancel-in-progress: false
 
 permissions:
   contents: write
