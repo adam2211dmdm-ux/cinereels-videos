@@ -1,0 +1,81 @@
+# CineReels auto-register own videos — runs WITHOUT any human approval.
+#
+# Adam's own videos (made by him or by another AI for him) are plain mp4
+# files in videos/ — only the catalog is encrypted. When he uploads a
+# new episode mp4 (GitHub web upload from his phone), this workflow
+# registers it in the encrypted manifest so it appears in the app:
+#   <series_id>-episode<N>.mp4   e.g. last-message-episode16.mp4
+#   episode<N>.mp4               legacy, means last-message
+# Only his own series (last-message, second-chance) are supported; the
+# script is idempotent — re-running it never duplicates anything.
+# Committing videos.enc triggers the auto-translate workflow, which
+# transcribes + translates the new episode (any language -> Arabic)
+# on its own. The manifest key/IV come from repo secrets
+# MANIFEST_KEY / MANIFEST_IV.
+name: Auto-register own videos
+
+on:
+  push:
+    paths:
+      - "videos/*.mp4"
+  workflow_dispatch:
+
+# Serialize with the translate runs: both edit videos.enc.
+concurrency:
+  group: auto-translate
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ffmpeg (duration probe)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+
+      - name: Register new videos
+        env:
+          MANIFEST_KEY: ${{ secrets.MANIFEST_KEY }}
+          MANIFEST_IV: ${{ secrets.MANIFEST_IV }}
+        run: python tools/auto_register_videos.py
+
+      - name: Commit and push (only if something changed)
+        run: |
+          set -e
+          if [ ! -f .auto-register-summary.json ]; then
+            echo "No summary file — the script did not run. Failing."
+            exit 1
+          fi
+          CHANGED=$(python -c "import json; print(' '.join(json.load(open('.auto-register-summary.json'))['changed_paths']))")
+          if [ -z "$CHANGED" ]; then
+            echo "Nothing to do — no new videos registered."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # shellcheck disable=SC2086
+          git add $CHANGED
+          MSG=$(python -c "import json; print(json.load(open('.auto-register-summary.json'))['commit_message'])")
+          git commit -m "$MSG"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push origin main; then
+              exit 0
+            fi
+            git rebase --abort || true
+            sleep 10
+          done
+          echo "push failed after 3 attempts"
+          exit 1
