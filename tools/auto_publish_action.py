@@ -382,6 +382,26 @@ HARVESTERS = {
 }
 
 
+def detect_category(title_en, title_ar, desc):
+    """v1.52: guess the series' primary category from its title and
+    description, so new publishes stop defaulting to 'drama'.
+    Only ids in ManifestLoader.KNOWN_CATEGORY_IDS are returned.
+    Order matters: revenge beats romance (a revenge story about a
+    cheating fiance is a thriller, not a romance)."""
+    text = " ".join(x for x in (title_en, title_ar, desc) if x).lower()
+    if not text:
+        return "drama"
+    if re.search(r"revenge|reveng|انتقام|ينتقم|ثأر", text):
+        return "thriller"
+    if re.search(r"billionaire|ملياردير|ceo|المدير التنفيذي|marriage|زواج|"
+                 r"fianc|خطيب|engagement|خطوبة|lover|love|حبيب|حب|"
+                 r"divorce|طلاق|wedding|زفاف|husband|زوج|wife|wives|"
+                 r"زوجة|ex-girlfriend|حبيبته السابقة",
+                 text):
+        return "romance"
+    return "drama"
+
+
 # ---------------------------------------------------------------- main
 
 def main():
@@ -452,6 +472,9 @@ def main():
     eps = res["episodes"]
     lang = "ar" if (provider == "dramabox" and title_ar) else "en"
     cover = res["cover"] or ""
+    # v1.52: detect the real genre instead of defaulting to drama.
+    cat = detect_category(res["title"] or title_en, title_ar,
+                          res["desc"] or "")
     # Episode thumbnails are origin-checked by the app
     # (ManifestLoader.isSameOriginManifest): a foreign-host thumbnail
     # rejects the WHOLE remote manifest. Series cover_url is NOT
@@ -463,7 +486,7 @@ def main():
         "hwztchapter.dramaboxdb.com")
     thumb = cover if cover and urllib.parse.urlsplit(cover).netloc in ALLOWED_THUMB_HOSTS else ""
     series = {
-        "category_id": "drama",
+        "category_id": cat,
         "cover_url": cover,
         "description": res["desc"] or title_en,
         "description_ar": title_ar,
@@ -487,7 +510,7 @@ def main():
             "title_ar": "الحلقة %d" % n,
             "description_en": "",
             "description_ar": "",
-            "category": "drama",
+            "category": cat,
             "duration_sec": e["duration"],
             "video_url": e["url"],
             "thumbnail_url": thumb,
@@ -496,7 +519,7 @@ def main():
             "likes_count": 0,
             "views_count": 0,
             "is_published": True,
-            "tags": ["drama"],
+            "tags": [cat],
             "is_locked": n > 25,
             "status": "published",
             "coming_soon": False,
