@@ -460,6 +460,18 @@ def main():
         if v.get("subtitles_en_url") and v.get("subtitles_ar_url"):
             continue
         cands.append(v)
+    # Newest first: the manifest appends new series/episodes at the
+    # end, so a fresh series would otherwise wait behind the whole
+    # backlog (~235 eps) before translating. Series in reverse
+    # first-appearance order, episodes ascending within a series
+    # (viewers watch ep1 first). ShortMax / NetShort / GoodShort need
+    # no expiry priority here: their baked video_url is empty, so
+    # they are never candidates at all.
+    _rank = {}
+    for _v in cands:
+        _rank.setdefault(_v["series_id"], len(_rank))
+    cands.sort(key=lambda _v: (-_rank[_v["series_id"]],
+                               _v.get("episode_number", 0)))
     summary = {"candidates": len(cands), "actions": [],
                "changed_paths": [], "commit_message": ""}
     changed = False

@@ -16,7 +16,10 @@ open "[CineReels Publish]" issue into a public series:
      closes the issue
   5. permanent failures (book not found, unknown provider) -> comment
      the reason + close, so they never retry forever
-  6. quota-out -> exit 2 with NO comment and NO close; the next run
+  6. transient failures (provider HTTP 5xx, timeouts, connection
+     errors) -> comment WITHOUT closing + exit 2; the next run
+     retries. A single 504 must never kill a publish request.
+  7. quota-out -> exit 2 with NO comment and NO close; the next run
      retries once the daily budget resets
 
 Per-provider rules (verified 2026-11-24):
@@ -204,6 +207,26 @@ def comment_and_close(number, comment):
     gh("POST", "/repos/%s/issues/%d/comments" % (REPO, number),
        {"body": comment})
     gh("PATCH", "/repos/%s/issues/%d" % (REPO, number), {"state": "closed"})
+
+
+def comment_only(number, comment):
+    gh("POST", "/repos/%s/issues/%d/comments" % (REPO, number),
+       {"body": comment})
+
+
+def is_transient(msg):
+    """True when a HarvestError is worth retrying on the next run
+    (Tergoda, 2026-11-27: a single APIShort 504 closed the issue
+    forever). Transient = provider HTTP 5xx, timeouts / connection
+    errors, or garbage JSON from the provider. Permanent = HTTP 4xx,
+    a book with genuinely no episodes, bad issue fields."""
+    m = re.search(r"HTTP (\d{3})", msg or "")
+    if m:
+        return int(m.group(1)) >= 500
+    low = (msg or "").lower()
+    return any(s in low for s in ("timed out", "timeout", "connection",
+                                  "temporarily", "fetch failed",
+                                  "bad json from"))
 
 
 def parse_body(body):
@@ -467,6 +490,12 @@ def main():
         print("quota out, leaving issue open: %s" % e, file=sys.stderr)
         return 2
     except HarvestError as e:
+        if is_transient(str(e)):
+            comment_only(number, "⏳ Publish paused — temporary problem "
+                         "(%s). Will retry automatically on the next "
+                         "run; the issue stays open." % e)
+            print("transient, leaving issue open: %s" % e, file=sys.stderr)
+            return 2
         return fail(str(e))
 
     eps = res["episodes"]
