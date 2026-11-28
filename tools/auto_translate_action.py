@@ -82,6 +82,37 @@ def run(cmd, timeout=300):
     return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
 
 
+BROWSER_UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/120.0 Safari/537.36")
+HLS_DOWNLOAD_ATTEMPTS = 3
+
+
+def download_hls(url, mp4, attempts=HLS_DOWNLOAD_ATTEMPTS):
+    """Download an HLS stream with ffmpeg, retrying transient failures.
+
+    The v-mps host (ReelShort -ld streams) intermittently refuses
+    requests from the runner; a single attempt made whole runs
+    silently skip the series (2026-11-28: Tergoda + 6acc9ca5 stalled
+    for hours with "success" runs). Returns (ok, last_error): ok is
+    True on success, otherwise last_error is the final attempt's
+    stderr (truncated) so the run log shows WHY it failed.
+    """
+    last_err = ""
+    for attempt in range(1, attempts + 1):
+        r = run(["ffmpeg", "-y", "-v", "error",
+                 "-user_agent", BROWSER_UA, "-i", url,
+                 "-c", "copy", "-bsf:a", "aac_adtstoasc", mp4],
+                timeout=900)
+        if r.returncode == 0:
+            return True, ""
+        last_err = (r.stderr or "").strip()
+        print("HLS download attempt %d/%d failed: %s"
+              % (attempt, attempts, last_err[:300]))
+        if attempt < attempts:
+            time.sleep(15)
+    return False, last_err
+
+
 # ---------------------------------------------------------------- manifest crypto
 # v1.48: the catalog on disk is videos.enc (base64 single-line AES-256-CBC).
 # Key/IV come from the MANIFEST_KEY / MANIFEST_IV env vars (repo secrets).
@@ -477,6 +508,11 @@ def main():
     changed = False
     msgs = []
     done = 0
+    # Skip reasons for the end-of-run summary line. Without this the
+    # run exits 0 with no commits and nobody can tell a stall from an
+    # empty queue (2026-11-28: Tergoda + 6acc9ca5 stalled for hours).
+    skips = {"HLS download failed": 0, "download failed": 0,
+             "whisper failed": 0, "translation failed": 0, "no speech": 0}
     for v in cands:
         if done >= MAX_PER_RUN:
             break
@@ -487,11 +523,11 @@ def main():
         mp4 = os.path.join(WORK, ep_id + ".mp4")
         url = v["video_url"]
         if url.lower().split("?")[0].endswith(".m3u8"):
-            r = run(["ffmpeg", "-y", "-v", "error", "-i", url,
-                     "-c", "copy", "-bsf:a", "aac_adtstoasc", mp4],
-                    timeout=900)
-            if r.returncode != 0:
-                print("SKIP %s: HLS download failed" % ep_id)
+            ok, hls_err = download_hls(url, mp4)
+            if not ok:
+                print("SKIP %s: HLS download failed: %s"
+                      % (ep_id, hls_err[:300]))
+                skips["HLS download failed"] += 1
                 cleanup(ep_id)
                 continue
         else:
@@ -499,6 +535,7 @@ def main():
                 urllib.request.urlretrieve(url, mp4)
             except Exception as e:
                 print("SKIP %s: download failed: %s" % (ep_id, e))
+                skips["download failed"] += 1
                 cleanup(ep_id)
                 continue
         dur = v.get("duration_sec") or 60
@@ -512,10 +549,12 @@ def main():
         data, err = transcribe(mp4, ep_id)
         if err:
             print("SKIP %s: %s" % (ep_id, err))
+            skips["whisper failed"] += 1
             cleanup(ep_id)
             continue
         if not data["segments"]:
             print("SKIP %s: no speech" % ep_id)
+            skips["no speech"] += 1
             cleanup(ep_id)
             continue
         midpoints = [(s["start"] + s["end"]) / 2.0
@@ -591,6 +630,7 @@ def main():
         except Exception as e:
             print("SKIP %s: translation from %s failed: %s"
                   % (ep_id, lang, e))
+            skips["translation failed"] += 1
             cleanup(ep_id)
             continue
         by_lang = {"en": en_segments, "ar": ar_segments}
@@ -625,6 +665,14 @@ def main():
               "w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=1)
     print(json.dumps(summary, ensure_ascii=False, indent=1))
+    # Final line, printed even when nothing was committed — this is
+    # what makes a stall visible in the run log (a run with
+    # candidates > 0, done == 0 and skips > 0 is stuck, not idle).
+    total_skipped = sum(skips.values())
+    print("SKIPPED: %d (%s); candidates=%d, done=%d"
+          % (total_skipped,
+             ", ".join("%s: %d" % (k, v) for k, v in skips.items()),
+             len(cands), done))
     return 0
 
 
