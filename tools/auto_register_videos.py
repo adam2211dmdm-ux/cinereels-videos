@@ -10,8 +10,17 @@ it appears in the app for everyone — no Muse involvement.
 Filename convention (in videos/):
   <series_id>-episode<N>.mp4   e.g. last-message-episode16.mp4
   episode<N>.mp4               legacy, means last-message
-Only Adam's own series are supported (last-message, second-chance).
-Any other file is ignored with a log line.
+Which series an episode belongs to is read from the FILENAME alone:
+the <series_id> part must name a series that already exists in the
+manifest and is one of Adam's own-uploaded series — either it has at
+least one existing video hosted in the repo (video_url under
+RAW_BASE), or it is last-message / second-chance. Provider and
+imported series (prov-*, narto-*, ia-*, rs-*, ...) are never accepted
+(their videos live on provider hosts, not in the repo), and neither
+are slugs with no series in the manifest. Any other file is ignored
+with a log line. Video ids keep the short prefix for the two original
+series (lm-ep16, sc-ep2); any other own series uses its full slug
+(<slug>-ep<N>).
 
 Behavior (idempotent — a full scan every run, safe to re-run):
 - For each matching mp4, find the video entry for (series_id,
@@ -50,14 +59,34 @@ VIDEOS_DIR = os.path.join(REPO_ROOT, "videos")
 RAW_BASE = ("https://raw.githubusercontent.com/adam2211dmdm-ux/"
             "cinereels-videos/main")
 
-# Own series only: series_id -> video-id prefix (lm-ep16, sc-ep2, ...).
-OWN_SERIES = {"last-message": "lm", "second-chance": "sc"}
+# Short video-id prefixes for the two original own series
+# (lm-ep16, sc-ep2). Any other own series uses its full slug
+# as the prefix (<slug>-ep<N>).
+LEGACY_PREFIX = {"last-message": "lm", "second-chance": "sc"}
 PATTERNS = [
-    (re.compile(r"^(last-message|second-chance)-episode(\d+)\.mp4$"),
+    (re.compile(r"^([a-z0-9-]+)-episode(\d+)\.mp4$"),
      lambda m: (m.group(1), int(m.group(2)))),
     (re.compile(r"^episode(\d+)\.mp4$"),
      lambda m: ("last-message", int(m.group(1)))),
 ]
+
+
+def is_own_series(sid, series, videos):
+    """True when `sid` names one of Adam's own-uploaded series: the
+    series must exist in the manifest, must not be a provider series
+    (prov-*), and must either be one of the two original own series
+    or already have at least one video hosted in the repo (video_url
+    under RAW_BASE). Provider/imported series keep their videos on
+    provider hosts, so they can never pass this check."""
+    if sid not in series:
+        return False
+    if sid.startswith("prov-"):
+        return False
+    if sid in LEGACY_PREFIX:
+        return True
+    return any(v.get("series_id") == sid
+               and (v.get("video_url") or "").startswith(RAW_BASE)
+               for v in videos)
 
 
 def run(cmd, timeout=120):
@@ -164,11 +193,11 @@ def main():
         if not m:
             continue
         sid, num = m
-        if sid not in OWN_SERIES or sid not in series:
+        if not is_own_series(sid, series, videos):
             print("SKIP %s: series %s is not an own series" % (fname, sid))
             continue
         s = series[sid]
-        vid = "%s-ep%d" % (OWN_SERIES[sid], num)
+        vid = "%s-ep%d" % (LEGACY_PREFIX.get(sid, sid), num)
         url = RAW_BASE + "/videos/" + urllib.parse.quote(fname)
         v = by_key.get((sid, num))
         if v and v.get("video_url") and v.get("status") == "published":
